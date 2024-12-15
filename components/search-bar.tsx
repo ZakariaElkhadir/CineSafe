@@ -7,9 +7,9 @@ export function SearchBar() {
       <Input
         type="search"
         placeholder="Search"
-        className="pl-3 pr-10 w-full bg-sky-900 rounded-3xl"
+        className="pl-3 pr-10 w-[500px] bg-gray-800 rounded-3xl"
       />
-      <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-200" />
+      <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-200 " />
     </div>
   )
 }
