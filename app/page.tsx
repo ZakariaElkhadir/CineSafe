@@ -40,7 +40,7 @@ function page() {
             <li>
               <a
                 href="#"
-                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 rounded-lg transition-all"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-teal-500 rounded-lg transition-all"
               >
                 <Home size={20} />
                 <span>Home</span>
@@ -49,7 +49,7 @@ function page() {
             <li>
               <a
                 href="#"
-                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 rounded-lg transition-all"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-teal-500 rounded-lg transition-all"
               >
                 <Compass size={20} />
                 <span>Explore</span>
@@ -58,7 +58,7 @@ function page() {
             <li>
               <a
                 href="#"
-                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 rounded-lg transition-all"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-teal-500 rounded-lg transition-all"
               >
                 <Film size={20} />
                 <span>Movies</span>
@@ -67,7 +67,7 @@ function page() {
             <li>
               <a
                 href="#"
-                className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 rounded-lg transition-all"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-teal-500 rounded-lg transition-all"
               >
                 <Heart size={20} />
                 <span>Favorites</span>
@@ -78,7 +78,7 @@ function page() {
           <div className=" pt-6 border-t border-gray-700 mt-8">
             <a
               href="#"
-              className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 rounded-lg transition-all"
+              className="flex items-center gap-3 px-4 py-2 hover:bg-teal-600 rounded-lg transition-all"
             >
               <Settings size={20} />
               <span>Settings</span>
