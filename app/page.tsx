@@ -1,4 +1,5 @@
 "use client";
+import Slider from "@/components/slider";
 import { SearchBar } from "../components/search-bar";
 import {
   Bell,
@@ -12,8 +13,9 @@ import {
 function page() {
   return (
     <>
+      {/* Search bar */}
       <header>
-        <div className="p-4 max-w-md mx-auto">
+        <div className="p-4 max-w-md mx-auto ">
           <div className="flex items-center justify-between gap-4">
             <div className="header__list">
               <button className="w-16 h-9 flex items-center justify-center bg-gray-800 text-white rounded-full">
@@ -29,6 +31,7 @@ function page() {
           </div>
         </div>
       </header>
+      {/* Sidebar */}
       <div className="flex text-center">
         <nav className="w-64 min-h-screen bg-gray-800 text-white ml-20 -mt-12 rounded-2xl p-6 fixed">
           <div className="mb-12">
@@ -85,7 +88,16 @@ function page() {
             </a>
           </div>
         </nav>
-        <main className="flex-1 p-4 ml-84">{/* Main content */}</main>
+         {/* Main content */}
+         <main className="flex-1 ml-84 w-96 p-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="pl-64 ml-20"> 
+              <div className="w-full">
+                <Slider />
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </>
   );
