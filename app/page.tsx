@@ -1,6 +1,7 @@
 "use client";
 import Slider from "@/components/slider";
 import { SearchBar } from "../components/search-bar";
+import  Footer  from "../components/Footer";
 import {
   Bell,
   ArrowDown,
@@ -10,6 +11,7 @@ import {
   Heart,
   Settings,
 } from "lucide-react";
+import MovieGrid from "../components/movies/movie-grid";
 function page() {
   return (
     <>
@@ -91,14 +93,16 @@ function page() {
          {/* Main content */}
          <main className="flex-1 ml-84 w-96 p-8">
           <div className="max-w-6xl mx-auto">
-            <div className="pl-64 ml-20"> 
+            <div className="pl-64 ml-16"> 
               <div className="w-full">
                 <Slider />
+                <MovieGrid />
               </div>
             </div>
           </div>
         </main>
       </div>
+      <Footer />
     </>
   );
 }
