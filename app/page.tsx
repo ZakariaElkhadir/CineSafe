@@ -33,9 +33,9 @@ function page() {
       <div className="flex text-center">
         <SideBar />
          {/* Main content */}
-         <main className="flex-1 ml-84 w-96 p-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="pl-64 ml-16"> 
+         <main className="flex-1  p-8">
+          <div className="max-w-7xl mx-auto">
+            <div className=""> 
               <div className="w-full">
                 <Slider />
                 <MovieGrid />

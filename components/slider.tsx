@@ -17,14 +17,14 @@ function Slider() {
               priority
             />
             <div className="absolute bottom-0 left-0 p-8 text-white text-left">
-              <div className="flex gap-3">
-                <h3 className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-medium hover:bg-white/30 transition-colors">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
+                <h3 className="px-3 sm:px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs sm:text-sm font-medium hover:bg-white/30 transition-colors">
                   Adventure
                 </h3>
-                <h3 className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-medium hover:bg-white/30 transition-colors">
+                <h3 className="px-3 sm:px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs sm:text-sm font-medium hover:bg-white/30 transition-colors">
                   Animation
                 </h3>
-              </div>
+                </div>
               <h2 className="slider__title text-6xl font-bold mb-4">Flow</h2>
               <p className="slider__description max-w-2xl mb-6 text-gray-200 ">
                 Cat is a solitary animal, but as its home is devastated by a

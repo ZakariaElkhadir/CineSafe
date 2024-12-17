@@ -1,9 +1,34 @@
 import React from 'react'
-import { Home, Compass, Film, Heart, Settings } from 'lucide-react'
+import { useState } from 'react'
+import { Home, Compass, Film, Heart, Settings, Menu, X} from 'lucide-react'
+
 function sideBar() {
-  return (
+    const [isOpen, setIsOpen] = useState(false)
+    return (
     <>
-     <nav className="w-64 min-h-screen bg-gray-800 text-white ml-20 -mt-12 rounded-2xl p-6 fixed">
+      {/* Mobile menu button */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 rounded-lg text-white"
+      >
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Overlay */}
+      {isOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+<nav className={`
+        fixed lg:relative 
+        w-64 min-h-screen bg-gray-800 text-white
+        p-6 z-50 transition-all duration-300
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        lg:ml-20 lg:-mt-12 rounded-2xl
+      `}>
           <div className="mb-12">
             <h1 className="text-4xl font-bold mt-4 mb-2">CineSafe</h1>
             <div className="w-16 h-1 bg-sky-500 mx-auto rounded-full"></div>
