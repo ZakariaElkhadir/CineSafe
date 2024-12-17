@@ -1,3 +1,4 @@
+'use client';
 import React from 'react'
 import { useState } from 'react'
 import { Home, Compass, Film, Heart, Settings, Menu, X} from 'lucide-react'
