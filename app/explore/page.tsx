@@ -31,7 +31,6 @@ function explore() {
       </header>
       {/* Sidebar */}
       <div className="flex text-center">
-        <SideBar />
          {/* Main content */}
          <main className="flex-1  lg:pl-72 p-8">
           <div className="max-w-7xl mx-auto">

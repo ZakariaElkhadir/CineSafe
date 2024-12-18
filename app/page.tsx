@@ -6,7 +6,7 @@ import SideBar from '@/components/sideBar';
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <SideBar />
+     
       
       <main className="lg:pl-72 pt-4 px-4"> 
         <div className="min-h-screen bg-gray-900 text-white">
