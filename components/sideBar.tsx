@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { Home, Compass, Film, Heart, Settings, Menu, X } from "lucide-react";
-
+import Link from "next/link";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,22 +40,22 @@ const Sidebar = () => {
 
         <ul className="space-y-6">
           <li>
-            <a
-              href="#"
+            <Link
+              href="/"
               className="flex items-center gap-3 px-4 py-2 hover:bg-cyan-500 rounded-lg transition-all"
             >
               <Home size={20} />
               <span>Home</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
+              href="/explore"
               className="flex items-center gap-3 px-4 py-2 hover:bg-cyan-500 rounded-lg transition-all"
             >
               <Compass size={20} />
               <span>Explore</span>
-            </a>
+            </Link>
           </li>
           <li>
             <a
