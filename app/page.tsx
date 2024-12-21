@@ -1,7 +1,6 @@
 import React from 'react';
-import { Search, Bell, PlayCircle } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 import MovieCategories from '@/components/movies/movieCategories';
-import SideBar from '@/components/sideBar';
 
 const HomePage = () => {
   return (
