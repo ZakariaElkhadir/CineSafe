@@ -27,7 +27,7 @@ export const getMovies = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error fetching movies" });
   }
 };
-const fetchMovieByName = async (name: string) => {
+export const fetchMovieByName = async (name: string) => {
     try {
       const response = await axios.get('https://www.omdbapi.com/', {
         params: {
