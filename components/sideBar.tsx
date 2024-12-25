@@ -25,7 +25,7 @@ const Sidebar = () => {
 
       <nav
         className={`
-          fixed top-4 left-4 
+          fixed top-4 left-0 lg:left-4 
           h-[calc(100vh-2rem)] w-64 
           bg-gray-800 text-white
           p-6 z-40 transition-all duration-300
