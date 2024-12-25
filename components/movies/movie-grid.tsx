@@ -1,66 +1,53 @@
 import { MovieCard } from "./movie-card"
+import React, { useEffect, useState } from 'react';
+import { fetchMovieByName } from '../../app/api/MoviesData';
 
-const movies = [
-  {
-    title: "dr.strange",
-    image: "/images/movies/dr.strange-poster.jpg",
-    href: "/movies/carry-on"
-  },
-  {
-    title: "Spiderwick",
-    image: "/images/movies/spiderwick-poster.jpg",
-    href: "/movies/mary"
-  },
-  {
-    title: "Intersteler",
-    image: "/images/movies/intersteler-poster.jpg",
-    href: "/movies/outer-banks"
-  },
-  {
-    title: "Zathura",
-    image: "/images/movies/zathura-poster.jpg",
-    href: "/movies/blacklist"
-  },
-  {
-    title: "Home Alone",
-    image: "/images/movies/homealone-poster.webp",
-    href: "/movies/flow"
-  },
-  {
-    title: "Spider-Man",
-    image: "/images/movies/spiderman-poster.jpg",
-    href: "/movies/flow"
-  },
-  {
-    title: "Brave",
-    image: "/images/movies/brave-poster.jpg",
-    href: "/movies/flow"
-  },
-  {
-    title: "Kung Fu Panda",
-    image: "/images/movies/panda-poster.jpg",
-    href: "/movies/flow"
-  }
-  
-];
+interface MovieData {
+  title: string;
+  image: string;
+  href: string;
+  key : string;
+}
 
+const MovieGrid: React.FC = () => {
+  const movieNames = ["Inception", "The Matrix", "Interstellar", 'zathura'];
+  const [movieData, setMovieData] = useState<MovieData[]>([]);
 
-export default function MovieGrid() {
+  useEffect(() => {
+    const fetchImages = async () => {
+      const data = await Promise.all(
+        movieNames.map(async (name) => {
+          const movieDetails = await fetchMovieByName(name);
+          return {
+            title: name,
+            image: movieDetails?.Poster || '',
+            href: `/movies/${name.replace(/\s+/g, '-').toLowerCase()}`,
+            key: name,
+          };
+        })
+      );
+      setMovieData(data);
+    };
+
+    fetchImages();
+  }, [movieNames]);
+
   return (
-    <div className=" min-h-screen p-6">
-      <div className="mx-auto max-w-7xl">
-        <h2 className="text-2xl text-left font-bold text-white mb-6">You might like</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-          {movies.map((movie) => (
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {movieData.map((movie) => (
+          <div key={movie.key} className="transform transition duration-300 hover:scale-105">
             <MovieCard
-              key={movie.title}
+              key={movie.key}
               title={movie.title}
               image={movie.image}
               href={movie.href}
             />
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default MovieGrid;

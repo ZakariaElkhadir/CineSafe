@@ -2,6 +2,8 @@
 
 This project is currently under development. I am working on the design: [Figma Design](https://www.figma.com/design/j10hdTjQNBUvJuA1TodK6d/Untitled?node-id=0-1&t=wtjMMQJ4m2vmfYrA-1)
 
+**Note:** This project relies on a private API key stored in a `.env` file, which is not publicly available. As a result, the project will not function correctly if you try to test it without the necessary API key.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
