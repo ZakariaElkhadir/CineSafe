@@ -44,6 +44,7 @@ const movies = [
   
 ];
 
+
 export default function MovieGrid() {
   return (
     <div className=" min-h-screen p-6">
