@@ -13,19 +13,19 @@ function explore() {
     <>
       {/* Search bar */}
       <header>
-        <div className="p-4 max-w-md mx-auto ">
-          <div className="flex items-center justify-between gap-4">
-            <div className="header__list">
-              <button className="w-16 h-9 flex items-center justify-center bg-gray-800 text-white rounded-full">
-                All <ArrowDown />
-              </button>
-            </div>
-            <SearchBar />
-            <div className="Header__notification">
-              <button className="w-9 h-9 flex items-center justify-center  rounded-full bg-gray-800 text-white">
-                <Bell className="rounded-full " />
-              </button>
-            </div>
+        <div className="p-4 max-w-md mx-auto">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6 lg:gap-8">
+        <div className="header__list">
+            <button className="w-16 h-9 flex items-center justify-center bg-gray-800 text-white rounded-full ml-12">
+            All <ArrowDown />
+            </button>
+        </div>
+        <SearchBar />
+        <div className="Header__notification">
+          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-white">
+            <Bell className="rounded-full" />
+          </button>
+        </div>
           </div>
         </div>
       </header>
