@@ -10,7 +10,7 @@ interface MovieData {
 }
 
 const MovieGrid: React.FC = () => {
-  const movieNames = ["Inception", "The Matrix", "Interstellar", 'flow'];
+  const movieNames = ["Inception", "The Matrix", "Interstellar", 'flow', 'Home Alone', 'The Lord of the Rings', 'Zathura', 'the mask'];
   const [movieData, setMovieData] = useState<MovieData[]>([]);
 
   useEffect(() => {
