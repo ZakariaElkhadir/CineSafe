@@ -11,7 +11,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 First, install the dependencies and run the development server:
 
-```bash
+
 ```bash
 npm install # Install the project dependencies
 ./set_api.sh # Set up the virtual environment with the  API key
