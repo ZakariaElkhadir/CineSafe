@@ -10,7 +10,7 @@ interface MovieData {
 }
 
 const MovieGrid: React.FC = () => {
-  const movieNames = ["Inception", "The Matrix", "Interstellar", 'zathura'];
+  const movieNames = ["Inception", "The Matrix", "Interstellar", 'flow'];
   const [movieData, setMovieData] = useState<MovieData[]>([]);
 
   useEffect(() => {
@@ -27,6 +27,9 @@ const MovieGrid: React.FC = () => {
         })
       );
       setMovieData(data);
+      if (data.length <= 2) {
+        console.log(data.length);
+      }
     };
 
     fetchImages();

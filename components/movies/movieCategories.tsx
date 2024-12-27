@@ -1,4 +1,5 @@
 import React from "react";
+import { getRandomMovies } from '../../app/api/MoviesData';
 import { Star, Calendar, Award, Shield, Info } from "lucide-react";
 interface MovieCardProps {
   title: string;

@@ -2,7 +2,7 @@
 import Slider from "@/components/slider";
 import { SearchBar } from "@/components/search-bar";
 import  Footer  from "@/components/Footer";
-import SideBar from "@/components/sideBar";
+
 import {
   Bell,
   ArrowDown,  
