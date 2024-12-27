@@ -2,17 +2,20 @@
 
 This project is currently under development. I am working on the design: [Figma Design](https://www.figma.com/design/j10hdTjQNBUvJuA1TodK6d/Untitled?node-id=0-1&t=wtjMMQJ4m2vmfYrA-1)
 
-**Note:** This project relies on a private API key stored in a `.env` file, which is not publicly available. As a result, the project will not function correctly if you try to test it without the necessary API key.
+**Note:** This project relies on a private API key stored in a `.env` file. Use the provided `set_api.sh` script to automatically set up the virtual environment with the necessary API key. Run the script whit this Command ```./set_api.sh``` before starting the development server to ensure the project functions correctly.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies and run the development server:
 
 ```bash
-npm install 
-npm run dev
+```bash
+npm install # Install the project dependencies
+./set_api.sh # Set up the virtual environment with the  API key
+npm run dev # Run the development server
+```
 # or
 yarn dev
 # or
@@ -21,9 +24,4 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
