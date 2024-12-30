@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import Link from "next/link"
 
+
+// explore cards
 interface MovieCardProps {
   title: string
   image: string

@@ -33,67 +33,25 @@ function filterSafeMovies(movies: Movie[]): Movie[] {
   return movies.filter(movie => safeRatings.includes(movie.Rated));
 }
 
-
-const predefinedMovieIds = [
-  "tt0111161", // The Shawshank Redemption
-  "tt0068646", // The Godfather
-  "tt0071562", // The Godfather Part II
-  "tt0110912", // Pulp Fiction
-  "tt0120737", // The Lord of the Rings: The Fellowship of the Ring
-  "tt0406375", // Zathura: A Space Adventure
-  
-];
-
-//function to get random IDs
-function getRandomIds(count: number): string[] {
-  const shuffled = predefinedMovieIds.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-}
-
-// API handler for random suggestions
-export const getRandomMovies = async (req: Request, res: Response) => {
-  const apiKey = process.env.NEXT_PUBLIC_OMDB_API_KEY;
-  const randomIds = getRandomIds(5); // Fetch 5 random movies
-
-  try {
-    // Fetch detailed movie information for each random IMDb ID
-    const detailedMovies = await Promise.all(
-      randomIds.map((imdbID: string) =>
-        axios
-          .get(`https://www.omdbapi.com/`, {
-            params: {
-              apikey: apiKey,
-              i: imdbID, // Fetch by IMDb ID
-            },
-          })
-          .then(res => res.data)
-      )
-    );
-
-    // Filter the detailed movies
-    const safeMovies = filterSafeMovies(detailedMovies);
-
-    // Return the filtered movies
-    res.status(200).json(safeMovies);
-  } catch (error) {
-    console.error("error fetching movies: ", error);
-    res.status(500).json({ error: "Error fetching movies" });
-  }
-};
-
-
-//  if i want to use name to add some suggestion manual 
-export const fetchMovieByName = async (name: string) => {
+export const fetchMovieByName = async (name: string): Promise<Movie | null> => {
   try {
     const response = await axios.get("https://www.omdbapi.com/", {
       params: {
         apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
-        t: name, // Use the exact movie title
+        t: name, 
       },
     });
-    return response.data; // Returns movie data
+
+    const movie = response.data;
+
+    // Check if the movie has a safe rating
+    if (filterSafeMovies([movie]).length > 0) {
+      return movie;
+    } else {
+      return null; // Return null if the movie is not safe
+    }
   } catch (error) {
-    console.error(`Error fetching movie data for ${name}:`, error);
+    console.error("Error fetching movie:", error);
     return null;
   }
 };
