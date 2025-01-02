@@ -100,38 +100,12 @@ const MovieCategories = () => {
     "Wallace & Gromit: Vengeance Most Fowl",
     "Kung Fu Panda 4",
   ];
+  const awardWinnersMovies = ['The Lion King', 'Finding Nemo', 'Up'];
+  const [awardWinners, setAwardWinners] = useState<MovieCardProps[]>([]);
   const [newReleases, setNewReleases] = useState<MovieCardProps[]>([]);
   const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
 
-  const awardWinners = [
-    {
-      title: "Dragon School",
-      year: "2023",
-      rating: "4.9",
-      safetyScore: "9.8",
-      description:
-        "Award-winning tale about young dragons learning to fly and make friends.",
-      image: "/api/placeholder/300/169",
-    },
-    {
-      title: "Rainbow City",
-      year: "2023",
-      rating: "4.8",
-      safetyScore: "9.7",
-      description:
-        "Critically acclaimed story about celebrating differences and unity.",
-      image: "/api/placeholder/300/169",
-    },
-    {
-      title: "Time Travelers",
-      year: "2023",
-      rating: "4.9",
-      safetyScore: "9.6",
-      description:
-        "Multiple award-winning adventure through historical events for young minds.",
-      image: "/api/placeholder/300/169",
-    },
-  ];
+  
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -161,8 +135,22 @@ const MovieCategories = () => {
           };
         })
       );
+      const awardWinnersData = await Promise.all(
+        awardWinnersMovies.map(async (name) => {
+          const movieDetails = await fetchMovieByName(name);
+          return {
+            title: name,
+            year: movieDetails?.Year || "",
+            rating: movieDetails?.imdbRating || "",
+            safetyScore: movieDetails?.Metascore || "",
+            description: movieDetails?.Plot || "",
+            image: movieDetails?.Poster || "", // Include image URL
+          };
+        })
+      );
       setFamilyFavorites(familyFavoritesData);
       setNewReleases(newReleasesData);
+      setAwardWinners(awardWinnersData);
     };
 
     fetchImages();
