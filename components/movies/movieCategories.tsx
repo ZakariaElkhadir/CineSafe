@@ -23,21 +23,22 @@ const MovieCard: React.FC<MovieCardProps> = ({
   image,
 }) => {
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-cyan-400 transition-all">
-      <div className="aspect-video relative">
+    <div className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-cyan-400 transition-all h-full flex flex-col">
+      <div className="relative w-full h-48">
         <Image
           src={image}
           alt={title}
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 33vw"
+          priority
         />
         <div className="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded-full text-sm">
           {safetyScore}/10
         </div>
       </div>
-      <div className="p-4">
-        <h3 className="font-bold text-lg mb-2 text-white">{title}</h3>
+      <div className="p-4 flex-1 flex flex-col">
+        <h3 className="font-bold text-lg mb-2 text-white truncate">{title}</h3>
         <div className="flex items-center space-x-4 text-sm text-gray-300 mb-3">
           <div className="flex items-center">
             <Calendar className="h-4 w-4 mr-1" />
@@ -48,8 +49,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
             {rating}
           </div>
         </div>
-        <p className="text-sm text-gray-400 mb-4 line-clamp-2">{description}</p>
-        <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-400 mb-4 line-clamp-3">{description}</p>
+        <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center text-cyan-400">
             <Shield className="h-4 w-4 mr-1" />
             <span className="text-sm">Family Safe</span>
