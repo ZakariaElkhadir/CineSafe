@@ -11,7 +11,6 @@ interface MovieData {
 
 const MovieGrid: React.FC = () => {
   const movieNames = ['flow', 'Home Alone', 'Zathura', 'The Spiderwick Chronicles'];
-
   const [movieData, setMovieData] = useState<MovieData[]>([]);
 
   useEffect(() => {

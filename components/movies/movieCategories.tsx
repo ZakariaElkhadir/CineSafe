@@ -1,7 +1,7 @@
-'use client';
-import React, {useEffect, useState} from "react";
-import { fetchMovieByName } from '../../app/api/MoviesData';
-import Image from 'next/image'
+"use client";
+import React, { useEffect, useState } from "react";
+import { fetchMovieByName } from "../../app/api/MoviesData";
+import Image from "next/image";
 
 import { Star, Calendar, Award, Shield, Info } from "lucide-react";
 
@@ -20,12 +20,18 @@ const MovieCard: React.FC<MovieCardProps> = ({
   rating,
   safetyScore,
   description,
-  image
+  image,
 }) => {
   return (
     <div className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-cyan-400 transition-all">
       <div className="aspect-video relative">
-      <Image src={image} alt={title} layout="fill" objectFit="cover" className="absolute inset-0" />
+        <Image
+          src={image}
+          alt={title}
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0"
+        />
         <div className="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded-full text-sm">
           {safetyScore}/10
         </div>
@@ -88,38 +94,14 @@ const CategorySection: React.FC<CategorySectionProps> = ({ title, movies }) => {
 
 // Demo component with sample data
 const MovieCategories = () => {
-  const movieNames = [ 'flow', 'Home Alone', 'Zathura'];
-  const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
-
-  const newReleases = [
-    {
-      title: "Space Explorers",
-      year: "2024",
-      rating: "4.6",
-      safetyScore: "9.4",
-      description:
-        "Young astronauts embark on an educational journey through the solar system.",
-        image : '/api/placeholder/300/169',
-    },
-    {
-      title: "Garden Adventures",
-      year: "2024",
-      rating: "4.7",
-      safetyScore: "9.7",
-      description:
-        "Tiny garden creatures teach children about nature and environmental care.",
-      image : '/api/placeholder/300/169',
-    },
-    {
-      title: "Music Land",
-      year: "2024",
-      rating: "4.8",
-      safetyScore: "9.9",
-      description:
-        "A musical journey teaching children about different instruments and melodies.",
-      image : '/api/placeholder/300/169',
-      },
+  const movieNames = ["flow", "Home Alone", "Zathura"];
+  const newReleasesMovies = [
+    "The Tiger's Apprentice",
+    "Wallace & Gromit: Vengeance Most Fowl",
+    "Kung Fu Panda 4",
   ];
+  const [newReleases, setNewReleases] = useState<MovieCardProps[]>([]);
+  const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
 
   const awardWinners = [
     {
@@ -129,7 +111,7 @@ const MovieCategories = () => {
       safetyScore: "9.8",
       description:
         "Award-winning tale about young dragons learning to fly and make friends.",
-      image : '/api/placeholder/300/169',
+      image: "/api/placeholder/300/169",
     },
     {
       title: "Rainbow City",
@@ -138,7 +120,7 @@ const MovieCategories = () => {
       safetyScore: "9.7",
       description:
         "Critically acclaimed story about celebrating differences and unity.",
-      image : '/api/placeholder/300/169',
+      image: "/api/placeholder/300/169",
     },
     {
       title: "Time Travelers",
@@ -147,34 +129,44 @@ const MovieCategories = () => {
       safetyScore: "9.6",
       description:
         "Multiple award-winning adventure through historical events for young minds.",
-      image : '/api/placeholder/300/169',
+      image: "/api/placeholder/300/169",
     },
   ];
 
   useEffect(() => {
     const fetchImages = async () => {
-      const data = await Promise.all(
+      const familyFavoritesData = await Promise.all(
         movieNames.map(async (name) => {
           const movieDetails = await fetchMovieByName(name);
           return {
             title: name,
-            year: movieDetails?.Year || '',
-            rating: movieDetails?.imdbRating || '',
-            safetyScore: movieDetails?.Metascore || '',
-            description: movieDetails?.Plot || '',
-            image: movieDetails?.Poster || '', // Include image URL
+            year: movieDetails?.Year || "",
+            rating: movieDetails?.imdbRating || "",
+            safetyScore: movieDetails?.Metascore || "",
+            description: movieDetails?.Plot || "",
+            image: movieDetails?.Poster || "", 
           };
         })
       );
-      setFamilyFavorites((prevMovies) => [
-        ...prevMovies,
-        ...data,
-      ]);
+      const newReleasesData = await Promise.all(
+        newReleasesMovies.map(async (name) => {
+          const movieDetails = await fetchMovieByName(name);
+          return {
+            title: name,
+            year: movieDetails?.Year || "",
+            rating: movieDetails?.imdbRating || "",
+            safetyScore: movieDetails?.Metascore || "",
+            description: movieDetails?.Plot || "",
+            image: movieDetails?.Poster || "", // Include image URL
+          };
+        })
+      );
+      setFamilyFavorites(familyFavoritesData);
+      setNewReleases(newReleasesData);
     };
-  
+
     fetchImages();
   }, []); // Empty dependency arr
-
 
   return (
     <div className="p-8 bg-gray-900">
