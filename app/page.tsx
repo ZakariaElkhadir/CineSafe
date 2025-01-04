@@ -1,5 +1,6 @@
 import React from "react";
-import { PlayCircle } from "lucide-react";
+import { Compass } from "lucide-react";
+import Link from "next/link";
 import MovieCategories from "@/components/movies/movieCategories";
 
 const HomePage = () => {
@@ -17,10 +18,12 @@ const HomePage = () => {
                 Discover and enjoy family-friendly animated films in a safe,
                 curated environment.
               </p>
-              <button className="flex items-center space-x-2 bg-cyan-500 text-white px-6 py-3 rounded-full w-fit hover:bg-cyan-600 transition-colors">
-                <PlayCircle className="h-5 w-5" />
-                <span>Start Watching</span>
-              </button>
+              <Link href="/explore">
+                <button className="flex items-center space-x-2 bg-cyan-500 text-white px-6 py-3 rounded-full w-fit hover:bg-cyan-600 transition-colors">
+                  <Compass className="h-5 w-5" />
+                  <span>Start Exploring</span>
+                </button>
+              </Link>
             </div>
           </div>
           {/* Featured Categories */}
@@ -36,7 +39,7 @@ const HomePage = () => {
                 >
                   <div className="absolute inset-0 bg-[url('/api/placeholder/300/169')] bg-cover bg-center group-hover:scale-110 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <PlayCircle className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-12 w-12" />
+                    <Compass className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-12 w-12" />
                   </div>
                 </div>
               ))}

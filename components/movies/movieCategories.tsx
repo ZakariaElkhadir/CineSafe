@@ -101,12 +101,10 @@ const MovieCategories = () => {
     "Wallace & Gromit: Vengeance Most Fowl",
     "Kung Fu Panda 4",
   ];
-  const awardWinnersMovies = ['The Lion King', 'Finding Nemo', 'Up'];
+  const awardWinnersMovies = ["The Lion King", "Finding Nemo", "Up"];
   const [awardWinners, setAwardWinners] = useState<MovieCardProps[]>([]);
   const [newReleases, setNewReleases] = useState<MovieCardProps[]>([]);
   const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
-
-  
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -119,7 +117,7 @@ const MovieCategories = () => {
             rating: movieDetails?.imdbRating || "",
             safetyScore: movieDetails?.Metascore || "",
             description: movieDetails?.Plot || "",
-            image: movieDetails?.Poster || "", 
+            image: movieDetails?.Poster || "",
           };
         })
       );
