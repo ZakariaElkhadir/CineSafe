@@ -1,15 +1,6 @@
 import axios from "axios";
 
-interface Request {
-  query: {
-    query: string;
-  };
-}
 
-interface Response {
-  status: (code: number) => Response;
-  json: (data: any) => void;
-}
 
 /**
  * Fetches movies from the OMDB API based on the provided query parameter.
@@ -23,7 +14,10 @@ interface Response {
  * @throws Will throw an error if there is an issue with fetching movies from the OMDB API.
  */
 
-interface Movie {
+export interface Movie {
+  Title: string;
+  Year: string;
+  Poster?: string;
   Rated: string;
   [key: string]: any; 
 }
@@ -44,14 +38,15 @@ export const fetchMovieByName = async (name: string): Promise<Movie | null> => {
 
     const movie = response.data;
 
-    // Check if the movie has a safe rating
+   
     if (filterSafeMovies([movie]).length > 0) {
       return movie;
     } else {
-      return null; // Return null if the movie is not safe
+      return null;
     }
   } catch (error) {
     console.error("Error fetching movie:", error);
     return null;
   }
 };
+
