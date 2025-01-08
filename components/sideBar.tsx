@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { Home, Compass, Film, Heart, Settings, Menu, X } from "lucide-react";
+import { Home, Compass, Info, Heart, Settings, Menu, X } from "lucide-react";
 import Link from "next/link";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,8 +62,8 @@ const Sidebar = () => {
               href="#"
               className="flex items-center gap-3 px-4 py-2 hover:bg-cyan-500 rounded-lg transition-all"
             >
-              <Film size={20} />
-              <span>Movies</span>
+              <Info size={20} />
+              <span>About</span>
             </a>
           </li>
           <li>
