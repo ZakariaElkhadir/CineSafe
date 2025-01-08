@@ -16,6 +16,7 @@ export function SearchBar() {
   const handleSearch = async () => {
     if (!query) {
       setError("Please enter a movie name.");
+      setIsPanelOpen(true); // Open the panel to show the error
       return;
     }
 
@@ -27,13 +28,14 @@ export function SearchBar() {
         setIsPanelOpen(true);
       } else {
         setError("No safe movie found with that name.");
+        console.log("No safe movie found with that name.");
         setMovie(null);
-        setIsPanelOpen(false);
+        setIsPanelOpen(true); // Keep the panel open to show the error
       }
     } catch (err) {
       setError("An error occurred while fetching data.");
       console.error(err);
-      setIsPanelOpen(false);
+      setIsPanelOpen(true); // Keep the panel open to show the error
     }
   };
 
