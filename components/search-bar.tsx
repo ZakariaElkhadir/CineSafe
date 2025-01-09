@@ -1,18 +1,18 @@
-"use client"; 
+"use client";
 
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { fetchMovieByName } from "@/app/api/MoviesData";
 import { Movie } from "@/app/api/MoviesData";
-import Image from "next/image";
+import Link from "next/link";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
   const [movie, setMovie] = useState<Movie | null>(null);
   const [error, setError] = useState("");
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const searchPanelRef = useRef<HTMLDivElement>(null); // Ref for the search panel
+  const searchPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
@@ -25,14 +25,13 @@ export function SearchBar() {
             setIsPanelOpen(true);
           } else {
             setError("No safe movie found with that name.");
-            console.log("No safe movie found with that name.");
             setMovie(null);
-            setIsPanelOpen(true); 
+            setIsPanelOpen(true);
           }
         } catch (err) {
           setError("An error occurred while fetching data.");
           console.error(err);
-          setIsPanelOpen(true); 
+          setIsPanelOpen(true);
         }
       } else {
         setMovie(null);
@@ -43,12 +42,6 @@ export function SearchBar() {
 
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      // Optionall
-    }
-  };
 
   // Close the panel when clicking outside
   useEffect(() => {
@@ -61,12 +54,10 @@ export function SearchBar() {
       }
     };
 
-    // Add event listener when the panel is open
     if (isPanelOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
-    // Clean up the event listener
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -81,7 +72,6 @@ export function SearchBar() {
           className="pl-3 pr-10 w-[25rem] bg-gray-800 rounded-3xl"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
         />
         <button
           className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-700 rounded-full transition-colors"
@@ -96,17 +86,21 @@ export function SearchBar() {
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 rounded-lg shadow-lg z-10">
           {error && <p className="text-red-500 p-2">{error}</p>}
           {movie && (
-            <div className="p-4">
-              <h2 className="text-lg font-semibold text-white">{movie.Title}</h2>
-              <p className="text-sm text-gray-400">{movie.Year}</p>
-              {movie.Poster && (
-                <img
-                  src={movie.Poster}
-                  alt={`${movie.Title} Poster`}
-                  className="w-32 h-48 object-cover mt-2 rounded-lg"
-                />
-              )}
-            </div>
+            <Link href={`/movies/${movie.imdbID}`}>
+              <div className="p-4 cursor-pointer hover:bg-gray-700">
+                <h2 className="text-lg font-semibold text-white">
+                  {movie.Title}
+                </h2>
+                <p className="text-sm text-gray-400">{movie.Year}</p>
+                {movie.Poster && (
+                  <img
+                    src={movie.Poster}
+                    alt={`${movie.Title} Poster`}
+                    className="w-32 h-48 object-cover mt-2 rounded-lg"
+                  />
+                )}
+              </div>
+            </Link>
           )}
         </div>
       )}

@@ -1,7 +1,5 @@
 import axios from "axios";
 
-
-
 /**
  * Fetches movies from the OMDB API based on the provided query parameter.
  * Only movies with safe ratings ("G" and "PG") are considered.
@@ -19,12 +17,12 @@ export interface Movie {
   Year: string;
   Poster?: string;
   Rated: string;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 function filterSafeMovies(movies: Movie[]): Movie[] {
   const safeRatings = ["G", "PG"];
-  return movies.filter(movie => safeRatings.includes(movie.Rated));
+  return movies.filter((movie) => safeRatings.includes(movie.Rated));
 }
 
 export const fetchMovieByName = async (name: string): Promise<Movie | null> => {
@@ -32,13 +30,12 @@ export const fetchMovieByName = async (name: string): Promise<Movie | null> => {
     const response = await axios.get("https://www.omdbapi.com/", {
       params: {
         apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
-        t: name, 
+        t: name,
       },
     });
 
     const movie = response.data;
 
-   
     if (filterSafeMovies([movie]).length > 0) {
       return movie;
     } else {
@@ -50,3 +47,24 @@ export const fetchMovieByName = async (name: string): Promise<Movie | null> => {
   }
 };
 
+export const fetchMovieById = async (id: string): Promise<Movie | null> => {
+  try {
+    const response = await axios.get("https://www.omdbapi.com/", {
+      params: {
+        apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
+        i: id, // Use the `i` parameter to fetch by ID
+      },
+    });
+
+    const movie = response.data;
+
+    if (filterSafeMovies([movie]).length > 0) {
+      return movie;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching movie:", error);
+    return null;
+  }
+};
