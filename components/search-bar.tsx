@@ -1,10 +1,11 @@
-"use client"; // Required for client-side interactivity in Next.js 13+
+"use client"; 
 
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { fetchMovieByName } from "@/app/api/MoviesData";
 import { Movie } from "@/app/api/MoviesData";
+import Image from "next/image";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
@@ -13,35 +14,39 @@ export function SearchBar() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const searchPanelRef = useRef<HTMLDivElement>(null); // Ref for the search panel
 
-  const handleSearch = async () => {
-    if (!query) {
-      setError("Please enter a movie name.");
-      setIsPanelOpen(true); // Open the panel to show the error
-      return;
-    }
-
-    try {
-      const fetchedMovie = await fetchMovieByName(query);
-      if (fetchedMovie) {
-        setMovie(fetchedMovie);
-        setError("");
-        setIsPanelOpen(true);
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (query) {
+        try {
+          const fetchedMovie = await fetchMovieByName(query);
+          if (fetchedMovie) {
+            setMovie(fetchedMovie);
+            setError("");
+            setIsPanelOpen(true);
+          } else {
+            setError("No safe movie found with that name.");
+            console.log("No safe movie found with that name.");
+            setMovie(null);
+            setIsPanelOpen(true); 
+          }
+        } catch (err) {
+          setError("An error occurred while fetching data.");
+          console.error(err);
+          setIsPanelOpen(true); 
+        }
       } else {
-        setError("No safe movie found with that name.");
-        console.log("No safe movie found with that name.");
         setMovie(null);
-        setIsPanelOpen(true); // Keep the panel open to show the error
+        setError("");
+        setIsPanelOpen(false);
       }
-    } catch (err) {
-      setError("An error occurred while fetching data.");
-      console.error(err);
-      setIsPanelOpen(true); // Keep the panel open to show the error
-    }
-  };
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSearch();
+      // Optionall
     }
   };
 
@@ -52,7 +57,7 @@ export function SearchBar() {
         searchPanelRef.current &&
         !searchPanelRef.current.contains(event.target as Node)
       ) {
-        setIsPanelOpen(false); // Close the panel
+        setIsPanelOpen(false);
       }
     };
 
@@ -80,7 +85,7 @@ export function SearchBar() {
         />
         <button
           className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-700 rounded-full transition-colors"
-          onClick={handleSearch}
+          onClick={() => setIsPanelOpen(!isPanelOpen)}
         >
           <Search className="h-4 w-4 text-gray-200" />
         </button>
@@ -92,7 +97,7 @@ export function SearchBar() {
           {error && <p className="text-red-500 p-2">{error}</p>}
           {movie && (
             <div className="p-4">
-              <h2 className="text-lg font-semibold">{movie.Title}</h2>
+              <h2 className="text-lg font-semibold text-white">{movie.Title}</h2>
               <p className="text-sm text-gray-400">{movie.Year}</p>
               {movie.Poster && (
                 <img

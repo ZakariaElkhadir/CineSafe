@@ -1,7 +1,6 @@
 "use client";
 import Slider from "@/components/slider";
 import { SearchBar } from "@/components/search-bar";
-import Footer from "@/components/Footer";
 
 import { Bell, ArrowDown } from "lucide-react";
 import MovieGrid from "../../components/movies/movie-grid";
@@ -44,7 +43,7 @@ function explore() {
           </div>
         </main>
       </div>
-      <Footer />
+      
     </>
   );
 }

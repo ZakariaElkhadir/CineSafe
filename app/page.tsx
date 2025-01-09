@@ -28,23 +28,7 @@ const HomePage = () => {
           </div>
           {/* Featured Categories */}
           <MovieCategories />
-          {/* Continue Watching */}
-          <div className="px-8 py-12">
-            <h3 className="text-2xl font-bold mb-6">Continue Watching</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((item) => (
-                <div
-                  key={item}
-                  className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group"
-                >
-                  <div className="absolute inset-0 bg-[url('/api/placeholder/300/169')] bg-cover bg-center group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Compass className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-12 w-12" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+         
         </div>
       </main>
     </div>
