@@ -19,6 +19,12 @@ export interface Movie {
   Rated: string;
   [key: string]: any;
 }
+export const improvePosterQuality = (posterUrl: string): string => {
+  if (!posterUrl) return posterUrl; 
+
+
+  return posterUrl.replace("SX300", "SX1000");
+};
 
 function filterSafeMovies(movies: Movie[]): Movie[] {
   const safeRatings = ["G", "PG"];
@@ -52,7 +58,8 @@ export const fetchMovieById = async (id: string): Promise<Movie | null> => {
     const response = await axios.get("https://www.omdbapi.com/", {
       params: {
         apikey: process.env.NEXT_PUBLIC_OMDB_API_KEY,
-        i: id, // Use the `i` parameter to fetch by ID
+        i: id,
+        plot: "full",
       },
     });
 
