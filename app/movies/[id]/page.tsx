@@ -1,15 +1,15 @@
-import Image from 'next/image'
-import { fetchMovieById } from "@/app/api/MoviesData"
-import { Suspense } from 'react'
-import { Star, Clock, Calendar, Users, Award, Clapperboard } from 'lucide-react'
-import { improvePosterQuality } from "@/app/api/MoviesData"
+import Image from 'next/image';
+import { fetchMovieById } from "@/app/api/MoviesData";
+import { Suspense } from 'react';
+import { Star, Clock, Calendar, Users, Award, Clapperboard } from 'lucide-react';
+import { improvePosterQuality } from "@/app/api/MoviesData";
 
-export default async function MovieDetails({
-  params,
-}: {
+interface MovieDetailsProps {
   params: { id: string };
-}) {
-  const { id } = params;
+}
+
+export default async function MovieDetails({ params }: MovieDetailsProps) {
+  const { id } = await params;
 
   return (
     <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:pl-72">
