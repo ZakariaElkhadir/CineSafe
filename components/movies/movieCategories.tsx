@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchMovieByName } from "../../app/api/MoviesData";
 import Image from "next/image";
-
+import LoadingCategorySection from "./LoadingCategorySection";
 import { Star, Calendar, Award, Shield, Info } from "lucide-react";
 
 interface MovieCardProps {
@@ -105,55 +105,72 @@ const MovieCategories = () => {
   const [awardWinners, setAwardWinners] = useState<MovieCardProps[]>([]);
   const [newReleases, setNewReleases] = useState<MovieCardProps[]>([]);
   const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
-      const familyFavoritesData = await Promise.all(
-        movieNames.map(async (name) => {
-          const movieDetails = await fetchMovieByName(name);
-          return {
-            title: name,
-            year: movieDetails?.Year || "",
-            rating: movieDetails?.imdbRating || "",
-            safetyScore: movieDetails?.Metascore || "",
-            description: movieDetails?.Plot || "",
-            image: movieDetails?.Poster || "",
-          };
-        })
-      );
-      const newReleasesData = await Promise.all(
-        newReleasesMovies.map(async (name) => {
-          const movieDetails = await fetchMovieByName(name);
-          return {
-            title: name,
-            year: movieDetails?.Year || "",
-            rating: movieDetails?.imdbRating || "",
-            safetyScore: movieDetails?.Metascore || "",
-            description: movieDetails?.Plot || "",
-            image: movieDetails?.Poster || "", // Include image URL
-          };
-        })
-      );
-      const awardWinnersData = await Promise.all(
-        awardWinnersMovies.map(async (name) => {
-          const movieDetails = await fetchMovieByName(name);
-          return {
-            title: name,
-            year: movieDetails?.Year || "",
-            rating: movieDetails?.imdbRating || "",
-            safetyScore: movieDetails?.Metascore || "",
-            description: movieDetails?.Plot || "",
-            image: movieDetails?.Poster || "", // Include image URL
-          };
-        })
-      );
-      setFamilyFavorites(familyFavoritesData);
-      setNewReleases(newReleasesData);
-      setAwardWinners(awardWinnersData);
+      try {
+        const familyFavoritesData = await Promise.all(
+          movieNames.map(async (name) => {
+            const movieDetails = await fetchMovieByName(name);
+            return {
+              title: name,
+              year: movieDetails?.Year || "",
+              rating: movieDetails?.imdbRating || "",
+              safetyScore: movieDetails?.Metascore || "",
+              description: movieDetails?.Plot || "",
+              image: movieDetails?.Poster || "",
+            };
+          })
+        );
+        const newReleasesData = await Promise.all(
+          newReleasesMovies.map(async (name) => {
+            const movieDetails = await fetchMovieByName(name);
+            return {
+              title: name,
+              year: movieDetails?.Year || "",
+              rating: movieDetails?.imdbRating || "",
+              safetyScore: movieDetails?.Metascore || "",
+              description: movieDetails?.Plot || "",
+              image: movieDetails?.Poster || "",
+            };
+          })
+        );
+        const awardWinnersData = await Promise.all(
+          awardWinnersMovies.map(async (name) => {
+            const movieDetails = await fetchMovieByName(name);
+            return {
+              title: name,
+              year: movieDetails?.Year || "",
+              rating: movieDetails?.imdbRating || "",
+              safetyScore: movieDetails?.Metascore || "",
+              description: movieDetails?.Plot || "",
+              image: movieDetails?.Poster || "",
+            };
+          })
+        );
+        setFamilyFavorites(familyFavoritesData);
+        setNewReleases(newReleasesData);
+        setAwardWinners(awardWinnersData);
+      } catch (error) {
+        console.error("Error fetching movie data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchImages();
-  }, []); // Empty dependency arr
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="p-8 bg-gray-900">
+        <LoadingCategorySection />
+        <LoadingCategorySection />
+        <LoadingCategorySection />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 bg-gray-900">
@@ -163,5 +180,4 @@ const MovieCategories = () => {
     </div>
   );
 };
-
 export default MovieCategories;
