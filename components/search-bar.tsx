@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { fetchMovieByName } from "@/app/api/MoviesData";
 import { Movie } from "@/app/api/MoviesData";
 import Link from "next/link";
+import Image from "next/image";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
@@ -93,7 +94,9 @@ export function SearchBar() {
                 </h2>
                 <p className="text-sm text-gray-400">{movie.Year}</p>
                 {movie.Poster && (
-                  <img
+                  <Image
+                    width={128}
+                    height={192}
                     src={movie.Poster}
                     alt={`${movie.Title} Poster`}
                     className="w-32 h-48 object-cover mt-2 rounded-lg"

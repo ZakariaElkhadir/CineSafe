@@ -55,7 +55,7 @@ export default function Page() {
             >
               While CineSafe does not stream movies, it provides detailed
               information about whether a movie is suitable for your family.
-              Additionally, it includes a brief synopsis of the movie's
+              Additionally, it includes a brief synopsis of the movie&#39;s
               storyline, helping you make informed decisions before watching.
             </motion.p>
 
