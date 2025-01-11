@@ -17,7 +17,18 @@ export interface Movie {
   Year: string;
   Poster?: string;
   Rated: string;
-  [key: string]: any;
+  Genre: string;
+  Plot: string;
+  imdbID: string;
+  imdbRating: string;
+  Runtime: string;
+  Released: string;
+  Director: string;
+  BoxOffice?: string;
+  Awards: string;
+  Actors: string;
+  Writer: string;
+  Metascore: string;
 }
 export const improvePosterQuality = (posterUrl: string): string => {
   if (!posterUrl) return posterUrl; 

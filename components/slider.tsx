@@ -5,17 +5,8 @@ import { CircleEllipsis, ChevronLeft, ChevronRight } from "lucide-react";
 import { fetchMovieByName } from "@/app/api/MoviesData";
 import { improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";
+import { Movie } from "@/app/api/MoviesData";
 
-interface Movie {
-  Title: string;
-  Poster: string;
-  Plot: string;
-  Genre: string;
-  Response: string;
-  imdbID: string;
-  Year: string;
-  Rated: string;
-}
 
 // List of movie names to fetch
 const movieNames = [
@@ -124,7 +115,7 @@ function MovieSlider() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-2xl" />
               <Image
                 className="object-cover object-center w-full h-[480px] rounded-2xl"
-                src={improvePosterQuality(currentMovie.Poster)}
+                src={improvePosterQuality(currentMovie.Poster || "")}
                 alt={`${currentMovie.Title} Movie Poster`}
                 width={1000}
                 height={480}

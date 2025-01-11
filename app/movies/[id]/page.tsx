@@ -4,11 +4,13 @@ import { Suspense } from 'react';
 import { Star, Clock, Calendar, Users, Award, Clapperboard } from 'lucide-react';
 import { improvePosterQuality } from "@/app/api/MoviesData";
 
-interface MovieDetailsProps {
-  params: { id: string };
-}
 
-export default async function MovieDetails({ params }: MovieDetailsProps) {
+
+export default async function MovieDetails({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   return (
