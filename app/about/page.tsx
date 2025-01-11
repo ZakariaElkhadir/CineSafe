@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex items-center justify-center  pl-72">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex items-center justify-center px-4  lg:pl-72">
       <motion.div
         className="max-w-4xl bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden"
         initial={{ opacity: 0, y: 50 }}
