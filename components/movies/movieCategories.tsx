@@ -4,6 +4,7 @@ import { fetchMovieByName } from "../../app/api/MoviesData";
 import Image from "next/image";
 import LoadingCategorySection from "./LoadingCategorySection";
 import { Star, Calendar, Award, Shield, Info } from "lucide-react";
+import Link from "next/link";
 
 interface MovieCardProps {
   title: string;
@@ -12,6 +13,7 @@ interface MovieCardProps {
   safetyScore: string;
   description: string;
   image: string;
+  imdbID: string;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -21,6 +23,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
   safetyScore,
   description,
   image,
+  imdbID,
 }) => {
   return (
     <div className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-cyan-400 transition-all h-full flex flex-col">
@@ -55,10 +58,12 @@ const MovieCard: React.FC<MovieCardProps> = ({
             <Shield className="h-4 w-4 mr-1" />
             <span className="text-sm">Family Safe</span>
           </div>
-          <button className="flex items-center text-sm text-white bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600">
-            <Info className="h-4 w-4 mr-1" />
-            Details
-          </button>
+          <Link href={`/movies/${imdbID}`}>
+            <button className="flex items-center text-sm text-white bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600">
+              <Info className="h-4 w-4 mr-1" />
+              Details
+            </button>
+          </Link>
         </div>
       </div>
     </div>
@@ -120,6 +125,7 @@ const MovieCategories = () => {
               safetyScore: movieDetails?.Metascore || "",
               description: movieDetails?.Plot || "",
               image: movieDetails?.Poster || "",
+              imdbID: movieDetails?.imdbID || "", 
             };
           })
         );
@@ -133,6 +139,7 @@ const MovieCategories = () => {
               safetyScore: movieDetails?.Metascore || "",
               description: movieDetails?.Plot || "",
               image: movieDetails?.Poster || "",
+              imdbID: movieDetails?.imdbID || "", 
             };
           })
         );
@@ -146,6 +153,7 @@ const MovieCategories = () => {
               safetyScore: movieDetails?.Metascore || "",
               description: movieDetails?.Plot || "",
               image: movieDetails?.Poster || "",
+              imdbID: movieDetails?.imdbID || "", 
             };
           })
         );
