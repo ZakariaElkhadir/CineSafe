@@ -11,7 +11,8 @@ This project is currently under development.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## License
-This project is proprietary software. Unauthorized copying, modification, distribution, or use of this code, in part or in full, is strictly prohibited without explicit permission from the owner.
+This project is proprietary software licensed under the CineSafe License. See the [LICENSE](./LICENSE) file for more details.
+
 
 ## Getting Started
 
