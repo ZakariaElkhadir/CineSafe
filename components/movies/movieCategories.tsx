@@ -125,7 +125,7 @@ const MovieCategories = () => {
               safetyScore: movieDetails?.Metascore || "",
               description: movieDetails?.Plot || "",
               image: movieDetails?.Poster || "",
-              imdbID: movieDetails?.imdbID || "", 
+              imdbID: movieDetails?.imdbID || "",
             };
           })
         );
@@ -139,7 +139,7 @@ const MovieCategories = () => {
               safetyScore: movieDetails?.Metascore || "",
               description: movieDetails?.Plot || "",
               image: movieDetails?.Poster || "",
-              imdbID: movieDetails?.imdbID || "", 
+              imdbID: movieDetails?.imdbID || "",
             };
           })
         );
@@ -153,7 +153,7 @@ const MovieCategories = () => {
               safetyScore: movieDetails?.Metascore || "",
               description: movieDetails?.Plot || "",
               image: movieDetails?.Poster || "",
-              imdbID: movieDetails?.imdbID || "", 
+              imdbID: movieDetails?.imdbID || "",
             };
           })
         );
