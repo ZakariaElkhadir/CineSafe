@@ -68,6 +68,7 @@ const Sidebar = () => {
           </li>
           <li>
             <a
+              onClick={() => alert("Favorites page is not available at the moment")}
               href="#"
               className="flex items-center gap-3 px-4 py-2 hover:bg-cyan-500 rounded-lg transition-all"
             >
@@ -79,6 +80,7 @@ const Sidebar = () => {
 
         <div className="pt-6 border-t border-gray-700 mt-8">
           <a
+            onClick={() => alert("Settings page is not available at the moment")}
             href="#"
             className="flex items-center gap-3 px-4 py-2 hover:bg-teal-500 rounded-lg transition-all"
           >
