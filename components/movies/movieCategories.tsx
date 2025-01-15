@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { fetchMovieByName, Movie } from "../../app/api/MoviesData";
+import { fetchMovieByName } from "../../app/api/MoviesData";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Calendar, Award, Shield, Info } from "lucide-react";
