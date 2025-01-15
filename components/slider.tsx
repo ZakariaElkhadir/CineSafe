@@ -116,7 +116,7 @@ function MovieSlider() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-2xl" />
               <Image
-                className="object-cover object-center w-full h-[480px] rounded-2xl"
+                className="object-cover object-center w-full h-[500px] lg:h-[480px] rounded-2xl"
                 src={improvePosterQuality(currentMovie.Poster || "")}
                 alt={`${currentMovie.Title} Movie Poster`}
                 width={1000}
