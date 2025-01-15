@@ -4,7 +4,7 @@ import { SearchBar } from "@/components/search-bar";
 import { useState } from "react";
 import { Bell, ArrowDown } from "lucide-react";
 import MovieGrid from "../../components/movies/movie-grid";
-function explore() {
+function Explore() {
   const [isPopdownVisible, setIsPopdownVisible] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("All");
@@ -97,4 +97,4 @@ function explore() {
   );
 }
 
-export default explore;
+export default Explore;
