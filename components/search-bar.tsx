@@ -70,7 +70,7 @@ export function SearchBar() {
         <Input
           type="search"
           placeholder="Search for a movie..."
-          className="pl-3 pr-10  w-56 lg:w-[25rem] bg-gray-800 rounded-3xl"
+          className="pl-3 pr-10   lg:w-[25rem] bg-gray-800 rounded-3xl"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
