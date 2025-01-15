@@ -21,10 +21,23 @@ const movieNames = [
   "Jurassic Park",
 ];
 function getRandomTitles(source: string[], count: number) {
-  return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
+  const safeCount = Math.min(count, source.length);
+  
+  
+  const sourceArray = [...source];
+  const result: string[] = [];
+  
+  // Fisher-Yates shuffle algorithm
+  for (let i = 0; i < safeCount; i++) {
+    const randomIndex = i + Math.floor(Math.random() * (sourceArray.length - i));
+    [sourceArray[i], sourceArray[randomIndex]] = [sourceArray[randomIndex], sourceArray[i]];
+    result.push(sourceArray[i]);
+  }
+  
+  return result;
 }
 function MovieSlider() {
-  const randomMovies = getRandomTitles(movieNames, 10);
+  const randomMovies = getRandomTitles(movieNames, movieNames.length);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
