@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { fetchMovieByName } from "../../app/api/MoviesData";
 import Image from "next/image";
 import Link from "next/link";
+import { improvePosterQuality } from "../../app/api/MoviesData";
 import { Star, Calendar, Award, Shield, Info } from "lucide-react";
 import LoadingCategorySection from "./LoadingCategorySection";
 
@@ -29,7 +30,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     <div className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-cyan-400 transition-all h-full flex flex-col">
       <div className="relative w-full h-48">
         <Image
-          src={image}
+          src={improvePosterQuality(image)}
           alt={title}
           fill
           className="object-cover"
