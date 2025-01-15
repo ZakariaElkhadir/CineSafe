@@ -21,8 +21,11 @@ const movieNames = [
   "The Avengers",
   "Jurassic Park",
 ];
-
+function getRandomTitles(source: string[], count: number) {
+  return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
+}
 function MovieSlider() {
+  const randomMovies = getRandomTitles(movieNames, 10);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +34,7 @@ function MovieSlider() {
   useEffect(() => {
     const fetchAllMovies = async () => {
       try {
-        const moviePromises = movieNames.map((name) => fetchMovieByName(name));
+        const moviePromises = randomMovies.map((name) => fetchMovieByName(name));
         const fetchedMovies = await Promise.all(moviePromises);
 
         // Filter out null values from the results
