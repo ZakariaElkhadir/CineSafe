@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { fetchMovieByName } from "../../app/api/MoviesData";
+import { fetchMovieByName, Movie } from "../../app/api/MoviesData";
 import Image from "next/image";
-import LoadingCategorySection from "./LoadingCategorySection";
-import { Star, Calendar, Award, Shield, Info } from "lucide-react";
 import Link from "next/link";
+import { Star, Calendar, Award, Shield, Info } from "lucide-react";
+import LoadingCategorySection from "./LoadingCategorySection";
 
 interface MovieCardProps {
   title: string;
@@ -69,6 +69,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     </div>
   );
 };
+
 interface CategorySectionProps {
   title: string;
   movies: MovieCardProps[];
@@ -98,25 +99,69 @@ const CategorySection: React.FC<CategorySectionProps> = ({ title, movies }) => {
   );
 };
 
+// Utility to shuffle and pick random items
+function getRandomTitles(source: string[], count: number) {
+  return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
+}
+
 // Demo component with sample data
 const MovieCategories = () => {
-  const movieNames = ["flow", "Home Alone", "Zathura"];
-  const newReleasesMovies = [
+  // Larger lists for each category
+  const allFamilyFavorites = [
+    "flow",
+    "Home Alone",
+    "Zathura",
+    "Matilda",
+    "Paddington",
+    "The Parent Trap",
+    "Akeelah and the Bee",
+    "The Mitchells vs. the Machines",
+    "Shrek",
+    "Despicable Me",
+    "Night at the Museum",
+    "Minions",
+  ];
+  const allNewReleases = [
     "The Tiger's Apprentice",
     "Wallace & Gromit: Vengeance Most Fowl",
     "Kung Fu Panda 4",
+    "Soul",
+    "Encanto",
+    "Moana 2",
+    "Mufasa: The Lion King",
+    "Paddington in Peru",
+    "Zootopia 2",
+    "How to Train Your Dragon",
   ];
-  const awardWinnersMovies = ["The Lion King", "Finding Nemo", "Up"];
+  const allAwardWinners = [
+    "The Lion King",
+    "Finding Nemo",
+    "Up",
+    "Spirited Away",
+    "Coco",
+    "Zootopia",
+    "The Incredibles",
+    "Spirited Away",
+    "Finding Nemo",
+    "Toy Story 3",
+    "Frozen",
+  ];
+
+  // Pick how many random movies you want for each category
+  const randomFamily = getRandomTitles(allFamilyFavorites, 3);
+  const randomReleases = getRandomTitles(allNewReleases, 3);
+  const randomAwards = getRandomTitles(allAwardWinners, 3);
+
   const [awardWinners, setAwardWinners] = useState<MovieCardProps[]>([]);
   const [newReleases, setNewReleases] = useState<MovieCardProps[]>([]);
   const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchMovies = async () => {
       try {
         const familyFavoritesData = await Promise.all(
-          movieNames.map(async (name) => {
+          randomFamily.map(async (name) => {
             const movieDetails = await fetchMovieByName(name);
             return {
               title: name,
@@ -130,7 +175,7 @@ const MovieCategories = () => {
           })
         );
         const newReleasesData = await Promise.all(
-          newReleasesMovies.map(async (name) => {
+          randomReleases.map(async (name) => {
             const movieDetails = await fetchMovieByName(name);
             return {
               title: name,
@@ -144,7 +189,7 @@ const MovieCategories = () => {
           })
         );
         const awardWinnersData = await Promise.all(
-          awardWinnersMovies.map(async (name) => {
+          randomAwards.map(async (name) => {
             const movieDetails = await fetchMovieByName(name);
             return {
               title: name,
@@ -167,7 +212,7 @@ const MovieCategories = () => {
       }
     };
 
-    fetchImages();
+    fetchMovies();
   }, []);
 
   if (isLoading) {
@@ -188,4 +233,5 @@ const MovieCategories = () => {
     </div>
   );
 };
+
 export default MovieCategories;
