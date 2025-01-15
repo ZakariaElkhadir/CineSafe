@@ -11,7 +11,6 @@ import { Movie } from "@/app/api/MoviesData";
 // List of movie names to fetch
 const movieNames = [
   "Flow",
-  "The Spiderwick Chronicles",
   "Brave",
   "The Lion King",
   "Frozen",

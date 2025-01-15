@@ -139,7 +139,6 @@ const MovieCategories = () => {
     "Up",
     "Spirited Away",
     "Coco",
-    "Zootopia",
     "The Incredibles",
     "Spirited Away",
     "Finding Nemo",
