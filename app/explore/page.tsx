@@ -18,7 +18,6 @@ function explore() {
             </div>
             <div className="flex-grow mx-4">
               {" "}
-              {/* Add flex-grow and margin to SearchBar container */}
               <SearchBar />
             </div>
             <div className="Header__notification">
@@ -43,7 +42,6 @@ function explore() {
           </div>
         </main>
       </div>
-      
     </>
   );
 }
