@@ -130,7 +130,6 @@ const MovieCategories = () => {
     "Moana 2",
     "Mufasa: The Lion King",
     "Paddington in Peru",
-    "Zootopia 2",
     "How to Train Your Dragon",
   ];
   const allAwardWinners = [
