@@ -114,7 +114,6 @@ const MovieCategories = () => {
     "Zathura",
     "Matilda",
     "Paddington",
-    "The Parent Trap",
     "Akeelah and the Bee",
     "The Mitchells vs. the Machines",
     "Shrek",
