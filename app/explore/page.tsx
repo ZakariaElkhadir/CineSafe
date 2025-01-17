@@ -20,10 +20,11 @@ function Explore() {
             <div className="header__list">
               <div className="relative">
                 <button
-                  className="w-auto px-2 h-9 flex items-center justify-center bg-gray-800 text-white rounded-full ml-12 hover:bg-gray-700 transition-colors"
+                  className="w-auto px-2 h-9 flex items-center justify-center bg-gray-800 text-white rounded-full ml-12 hover:bg-gray-700 transition-colors relative group overflow-hidden"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   {selectedOption} <ArrowDown className="ml-1" />
+                  <span className="absolute inset-0 border-2 border-cyan-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 scale-50 group-hover:scale-100"></span>
                 </button>
 
                 {isDropdownOpen && (
