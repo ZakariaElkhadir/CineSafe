@@ -19,7 +19,7 @@ export default function Footer() {
               <h3 className="text-lg font-semibold">CineSafe</h3>
               <p className="text-sm text-gray-400">&copy; 2025 CineSafe. All rights reserved.</p>
               <p className="text-sm">
-                For business inquiries, contact us at{" "}
+                For business inquiries, contact me at{" "}
                 <a href="mailto:zelkhadir5@gmail.com" className="underline hover:text-cyan-500 transition-colors">
                   zelkhadir5@gmail.com
                 </a>
