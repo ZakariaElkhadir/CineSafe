@@ -38,7 +38,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
           priority
         />
         <div className="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded-full text-sm">
-          {safetyScore}/10
+          {safetyScore}/100
         </div>
       </div>
       <div className="p-4 flex-1 flex flex-col">
