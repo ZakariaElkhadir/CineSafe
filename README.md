@@ -2,9 +2,6 @@
 
 © 2025 Zakaria Elkhadir. All rights reserved.
 
-This project is currently under development.
-
-[Figma Design](https://www.figma.com/design/j10hdTjQNBUvJuA1TodK6d/Untitled?node-id=0-1&t=wtjMMQJ4m2vmfYrA-1)
 
 **Note:** This project relies on a private API key stored in a `.env` file. To streamline the setup process, use the provided `set_api.sh` script to configure the environment with the required API key. This script is intended solely for testing purposes and does not grant ownership or usage rights for the project or its API key. Ensure you run the script using the command `./set_api.sh` before starting the development server to ensure the project functions correctly.
 
