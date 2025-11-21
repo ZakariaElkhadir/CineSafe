@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchMovieByName } from "../../app/api/MoviesData";
+import { useMovieCache } from "@/contexts/MovieCacheContext";
 import { MovieCard } from "./movie-card";
 
 interface MovieData {
@@ -28,24 +28,33 @@ const allPossibleMovies = [
   "Coco",
 ];
 
-// Utility to shuffle and pick random items
 function getRandomTitles(source: string[], count: number) {
   return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
+const CACHE_KEY = "movie-grid-data";
+
 const MovieGrid: React.FC = () => {
+  const { getMovie, getComponentData, setComponentData } = useMovieCache();
   const [movieData, setMovieData] = useState<MovieData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRandomMovies = async () => {
+      const cachedData = getComponentData<MovieData[]>(CACHE_KEY);
+      if (cachedData) {
+        setMovieData(cachedData);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         setIsLoading(true);
         const randomMovies = getRandomTitles(allPossibleMovies, 8);
         const data = await Promise.all(
           randomMovies.map(async (name) => {
-            const movie = await fetchMovieByName(name);
+            const movie = await getMovie(name);
             return {
               title: movie?.Title || name,
               image: movie?.Poster || "/default-poster.jpg",
@@ -55,6 +64,7 @@ const MovieGrid: React.FC = () => {
           })
         );
         setMovieData(data);
+        setComponentData(CACHE_KEY, data);
       } catch (err) {
         setError("Failed to fetch movies");
         console.error(err);
@@ -64,7 +74,7 @@ const MovieGrid: React.FC = () => {
     };
 
     fetchRandomMovies();
-  }, []);
+  }, [getMovie, getComponentData, setComponentData]);
 
   if (isLoading) {
     return (

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CircleEllipsis, ChevronLeft, ChevronRight } from "lucide-react";
-import { fetchMovieByName } from "@/app/api/MoviesData";
+import { useMovieCache } from "@/contexts/MovieCacheContext";
 import { improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";
 import { Movie } from "@/app/api/MoviesData";
@@ -36,8 +36,11 @@ function getRandomTitles(source: string[], count: number) {
   
   return result;
 }
+const CACHE_KEY = "movie-slider-data";
+const RANDOM_SELECTION_KEY = "movie-slider-selection";
+
 function MovieSlider() {
-  const randomMovies = getRandomTitles(movieNames, movieNames.length);
+  const { getMovie, getComponentData, setComponentData } = useMovieCache();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,8 +48,27 @@ function MovieSlider() {
 
   useEffect(() => {
     const fetchAllMovies = async () => {
+      // Check if data is already cached
+      const cachedMovies = getComponentData<Movie[]>(CACHE_KEY);
+      const cachedSelection = getComponentData<string[]>(RANDOM_SELECTION_KEY);
+      
+      if (cachedMovies && cachedSelection) {
+        setMovies(cachedMovies);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const moviePromises = randomMovies.map((name) => fetchMovieByName(name));
+        // Get or generate random selection
+        let randomMovies: string[];
+        if (cachedSelection) {
+          randomMovies = cachedSelection;
+        } else {
+          randomMovies = getRandomTitles(movieNames, movieNames.length);
+          setComponentData(RANDOM_SELECTION_KEY, randomMovies);
+        }
+
+        const moviePromises = randomMovies.map((name) => getMovie(name));
         const fetchedMovies = await Promise.all(moviePromises);
 
         // Filter out null values from the results
@@ -58,6 +80,7 @@ function MovieSlider() {
           setError("No valid movies found");
         } else {
           setMovies(validMovies);
+          setComponentData(CACHE_KEY, validMovies);
         }
         setLoading(false);
       } catch (error) {
@@ -68,7 +91,7 @@ function MovieSlider() {
     };
 
     fetchAllMovies();
-  }, []);
+  }, [getMovie, getComponentData, setComponentData]);
 
   const nextSlide = () => {
     if (movies.length > 0) {

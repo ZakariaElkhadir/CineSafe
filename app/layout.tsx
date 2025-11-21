@@ -4,6 +4,7 @@ import "./globals.css";
 import SideBar from "@/components/sideBar";
 import Footer from "@/components/Footer";
 import { Poppins } from 'next/font/google';
+import { MovieCacheProvider } from "@/contexts/MovieCacheContext";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -35,9 +36,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${poppins.className} ${geistMono.variable} antialiased bg-gray-900`}
       >
-        <SideBar/>
-        {children}
-        <Footer />
+        <MovieCacheProvider>
+          <SideBar/>
+          {children}
+          <Footer />
+        </MovieCacheProvider>
       </body>
     </html>
   );

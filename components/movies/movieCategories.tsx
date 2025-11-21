@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { fetchMovieByName } from "../../app/api/MoviesData";
+import { useMovieCache } from "@/contexts/MovieCacheContext";
 import Image from "next/image";
 import Link from "next/link";
 import { improvePosterQuality } from "../../app/api/MoviesData";
@@ -145,22 +145,70 @@ const MovieCategories = () => {
     "Frozen",
   ];
 
-  // Pick how many random movies you want for each category
-  const randomFamily = getRandomTitles(allFamilyFavorites, 3);
-  const randomReleases = getRandomTitles(allNewReleases, 3);
-  const randomAwards = getRandomTitles(allAwardWinners, 3);
-
+  const { getMovie, getComponentData, setComponentData } = useMovieCache();
   const [awardWinners, setAwardWinners] = useState<MovieCardProps[]>([]);
   const [newReleases, setNewReleases] = useState<MovieCardProps[]>([]);
   const [familyFavorites, setFamilyFavorites] = useState<MovieCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const CACHE_KEYS = {
+    familyFavorites: "movie-categories-family",
+    newReleases: "movie-categories-releases",
+    awardWinners: "movie-categories-awards",
+    familySelection: "movie-categories-family-selection",
+    releasesSelection: "movie-categories-releases-selection",
+    awardsSelection: "movie-categories-awards-selection",
+  };
+
   useEffect(() => {
     const fetchMovies = async () => {
+      // Check if data is already cached
+      const cachedFamily = getComponentData<MovieCardProps[]>(CACHE_KEYS.familyFavorites);
+      const cachedReleases = getComponentData<MovieCardProps[]>(CACHE_KEYS.newReleases);
+      const cachedAwards = getComponentData<MovieCardProps[]>(CACHE_KEYS.awardWinners);
+
+      if (cachedFamily && cachedReleases && cachedAwards) {
+        setFamilyFavorites(cachedFamily);
+        setNewReleases(cachedReleases);
+        setAwardWinners(cachedAwards);
+        setIsLoading(false);
+        return;
+      }
+
       try {
+        // Get or generate random selections
+        let randomFamily: string[];
+        let randomReleases: string[];
+        let randomAwards: string[];
+
+        const cachedFamilySelection = getComponentData<string[]>(CACHE_KEYS.familySelection);
+        const cachedReleasesSelection = getComponentData<string[]>(CACHE_KEYS.releasesSelection);
+        const cachedAwardsSelection = getComponentData<string[]>(CACHE_KEYS.awardsSelection);
+
+        if (cachedFamilySelection) {
+          randomFamily = cachedFamilySelection;
+        } else {
+          randomFamily = getRandomTitles(allFamilyFavorites, 3);
+          setComponentData(CACHE_KEYS.familySelection, randomFamily);
+        }
+
+        if (cachedReleasesSelection) {
+          randomReleases = cachedReleasesSelection;
+        } else {
+          randomReleases = getRandomTitles(allNewReleases, 3);
+          setComponentData(CACHE_KEYS.releasesSelection, randomReleases);
+        }
+
+        if (cachedAwardsSelection) {
+          randomAwards = cachedAwardsSelection;
+        } else {
+          randomAwards = getRandomTitles(allAwardWinners, 3);
+          setComponentData(CACHE_KEYS.awardsSelection, randomAwards);
+        }
+
         const familyFavoritesData = await Promise.all(
           randomFamily.map(async (name) => {
-            const movieDetails = await fetchMovieByName(name);
+            const movieDetails = await getMovie(name);
             return {
               title: name,
               year: movieDetails?.Year || "",
@@ -174,7 +222,7 @@ const MovieCategories = () => {
         );
         const newReleasesData = await Promise.all(
           randomReleases.map(async (name) => {
-            const movieDetails = await fetchMovieByName(name);
+            const movieDetails = await getMovie(name);
             return {
               title: name,
               year: movieDetails?.Year || "",
@@ -188,7 +236,7 @@ const MovieCategories = () => {
         );
         const awardWinnersData = await Promise.all(
           randomAwards.map(async (name) => {
-            const movieDetails = await fetchMovieByName(name);
+            const movieDetails = await getMovie(name);
             return {
               title: name,
               year: movieDetails?.Year || "",
@@ -203,6 +251,9 @@ const MovieCategories = () => {
         setFamilyFavorites(familyFavoritesData);
         setNewReleases(newReleasesData);
         setAwardWinners(awardWinnersData);
+        setComponentData(CACHE_KEYS.familyFavorites, familyFavoritesData);
+        setComponentData(CACHE_KEYS.newReleases, newReleasesData);
+        setComponentData(CACHE_KEYS.awardWinners, awardWinnersData);
       } catch (error) {
         console.error("Error fetching movie data:", error);
       } finally {
@@ -211,7 +262,7 @@ const MovieCategories = () => {
     };
 
     fetchMovies();
-  }, []);
+  }, [getMovie, getComponentData, setComponentData]);
 
   if (isLoading) {
     return (
