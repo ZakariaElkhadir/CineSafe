@@ -10,6 +10,8 @@ interface MovieCacheContextType {
   setComponentData: <T>(key: string, data: T) => void;
   clearCache: () => void;
   cache: Map<string, Movie | null>;
+  apiLimitReached: boolean;
+  setApiLimitReached: (reached: boolean) => void;
 }
 
 const MovieCacheContext = createContext<MovieCacheContextType | undefined>(undefined);
@@ -17,6 +19,7 @@ const MovieCacheContext = createContext<MovieCacheContextType | undefined>(undef
 export const MovieCacheProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cache, setCache] = useState<Map<string, Movie | null>>(new Map());
   const [componentDataCache, setComponentDataCache] = useState<Map<string, any>>(new Map());
+  const [apiLimitReached, setApiLimitReached] = useState(false);
   const cacheRef = useRef<Map<string, Movie | null>>(new Map());
   const componentDataCacheRef = useRef<Map<string, any>>(new Map());
 
@@ -35,15 +38,22 @@ export const MovieCacheProvider: React.FC<{ children: ReactNode }> = ({ children
       return cacheRef.current.get(cacheKey) || null;
     }
 
-    const movie = await fetchMovieByName(name);
-    
-    setCache((prevCache) => {
-      const newCache = new Map(prevCache);
-      newCache.set(cacheKey, movie);
-      return newCache;
-    });
+    try {
+      const movie = await fetchMovieByName(name);
+      
+      setCache((prevCache) => {
+        const newCache = new Map(prevCache);
+        newCache.set(cacheKey, movie);
+        return newCache;
+      });
 
-    return movie;
+      return movie;
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        setApiLimitReached(true);
+      }
+      return null;
+    }
   }, []);
 
   const getComponentData = useCallback(<T,>(key: string): T | null => {
@@ -64,7 +74,7 @@ export const MovieCacheProvider: React.FC<{ children: ReactNode }> = ({ children
   }, []);
 
   return (
-    <MovieCacheContext.Provider value={{ getMovie, getComponentData, setComponentData, clearCache, cache }}>
+    <MovieCacheContext.Provider value={{ getMovie, getComponentData, setComponentData, clearCache, cache, apiLimitReached, setApiLimitReached }}>
       {children}
     </MovieCacheContext.Provider>
   );

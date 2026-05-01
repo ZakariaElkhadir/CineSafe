@@ -3,6 +3,7 @@ import { fetchLatestSafeMovies } from "@/app/api/MoviesData";
 import { Movie } from "@/app/api/MoviesData";
 import { MovieCard } from "./movie-card";
 import { Film, RefreshCw } from "lucide-react";
+import { useMovieCache } from "@/contexts/MovieCacheContext";
 
 // No unused CACHE_KEY here
 
@@ -13,6 +14,7 @@ const MovieGrid: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { setApiLimitReached } = useMovieCache();
 
   useEffect(() => {
     const load = async () => {
@@ -27,7 +29,10 @@ const MovieGrid: React.FC = () => {
         const latest = await fetchLatestSafeMovies(12);
         sessionCache = latest;
         setMovies(latest);
-      } catch (err) {
+      } catch (err: any) {
+        if (err.response?.status === 401) {
+          setApiLimitReached(true);
+        }
         setError("Failed to fetch latest movies");
         console.error(err);
       } finally {

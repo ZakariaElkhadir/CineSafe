@@ -6,6 +6,7 @@ import { searchMovies, SearchResult, improvePosterQuality } from "@/app/api/Movi
 import Link from "next/link";
 import Image from "next/image";
 import { AILoadingHorizontal } from "./ai-loading";
+import { useMovieCache } from "@/contexts/MovieCacheContext";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
@@ -14,6 +15,7 @@ export function SearchBar() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [hasSearched, setHasSearched] = useState(false);
+  const { setApiLimitReached } = useMovieCache();
   const searchPanelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,8 +55,14 @@ export function SearchBar() {
         setResults(found);
       }
     } else {
-      const { results: found } = await searchMovies(q);
-      setResults(found);
+      try {
+        const { results: found } = await searchMovies(q);
+        setResults(found);
+      } catch (err: any) {
+        if (err.response?.status === 401) {
+          setApiLimitReached(true);
+        }
+      }
     }
 
     setHasSearched(true);

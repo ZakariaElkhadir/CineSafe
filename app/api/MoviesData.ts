@@ -77,7 +77,10 @@ export const searchMovies = async (
     const totalResults = parseInt(response.data.totalResults || "0", 10);
 
     return { results, totalResults };
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw error;
+    }
     console.error("Error searching movies:", error);
     return { results: [], totalResults: 0 };
   }
@@ -105,7 +108,10 @@ export const fetchMovieByName = async (name: string): Promise<Movie | null> => {
     } else {
       return null;
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw error;
+    }
     console.error("Error fetching movie:", error);
     return null;
   }
@@ -178,7 +184,10 @@ export const fetchMovieById = async (id: string): Promise<Movie | null> => {
     } else {
       return null;
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw error;
+    }
     console.error("Error fetching movie:", error);
     return null;
   }

@@ -8,6 +8,7 @@ import { MovieCacheProvider } from "@/contexts/MovieCacheContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { ChatProvider } from "@/contexts/ChatContext";
 import { ChatBubble } from "@/components/chat-bubble";
+import { ApiLimitBanner } from "@/components/api-limit-banner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -44,6 +45,7 @@ export default function RootLayout({
         <MovieCacheProvider>
           <FavoritesProvider>
             <ChatProvider>
+              <ApiLimitBanner />
               <SideBar />
               {children}
               <Footer />
