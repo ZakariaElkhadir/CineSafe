@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";
+import { AISafetyCard } from "@/components/movies/ai-safety-card";
+import { VibeRecommendations } from "@/components/movies/vibe-recommendations";
+import { AskAIButton } from "@/components/movies/ask-ai-button";
 
 export default async function MovieDetails({
   params,
@@ -97,6 +100,9 @@ async function MovieContent({ id }: { id: string }) {
               {movie.Runtime}
             </span>
           </div>
+          <div className="mt-6">
+            <AskAIButton movieTitle={movie.Title} />
+          </div>
         </div>
       </div>
 
@@ -138,6 +144,9 @@ async function MovieContent({ id }: { id: string }) {
               <p className="text-gray-400 leading-relaxed">{movie.Plot}</p>
             </div>
 
+            {/* AI Safety Analysis */}
+            <AISafetyCard movie={movie} />
+
             {/* Cast & Crew */}
             <div className="space-y-4">
               <InfoSection
@@ -168,6 +177,9 @@ async function MovieContent({ id }: { id: string }) {
             <StatCard icon={<Shield className="w-4 h-4 text-cyan-400" />} label="Rating" value={movie.Rated} />
           </div>
         </div>
+
+        {/* AI Recommendations */}
+        <VibeRecommendations movie={movie} />
       </div>
     </div>
   );

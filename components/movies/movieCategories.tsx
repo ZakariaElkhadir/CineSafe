@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useMovieCache } from "@/contexts/MovieCacheContext";
 import Image from "next/image";
 import Link from "next/link";
-import { improvePosterQuality } from "../../app/api/MoviesData";
+import { improvePosterQuality, fetchLatestSafeMovies, Movie } from "../../app/api/MoviesData";
 import { Star, Calendar, Award, Shield, ChevronRight, Film } from "lucide-react";
 import LoadingCategorySection from "./LoadingCategorySection";
 import { FavoritesButton } from "./favorites-button";
@@ -122,16 +122,24 @@ function getRandomTitles(source: string[], count: number) {
   return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
+// Session-level cache to avoid redundant API calls across re-renders
+let latestMoviesCache: Movie[] | null = null;
+
+const movieToCard = (m: Movie): MovieCardProps => ({
+  title: m.Title,
+  year: m.Year,
+  rating: m.imdbRating,
+  safetyScore: m.Metascore,
+  description: m.Plot,
+  image: m.Poster || "",
+  imdbID: m.imdbID,
+});
+
 const MovieCategories = () => {
   const allFamilyFavorites = [
     "flow", "Home Alone", "Zathura", "Matilda", "Paddington",
     "Akeelah and the Bee", "The Mitchells vs. the Machines",
     "Shrek", "Despicable Me", "Night at the Museum", "Minions",
-  ];
-  const allNewReleases = [
-    "The Tiger's Apprentice", "Wallace & Gromit: Vengeance Most Fowl",
-    "Kung Fu Panda 4", "Soul", "Encanto", "Moana 2",
-    "Mufasa: The Lion King", "Paddington in Peru", "How to Train Your Dragon",
   ];
   const allAwardWinners = [
     "The Lion King", "Finding Nemo", "Up", "Spirited Away",
@@ -149,7 +157,6 @@ const MovieCategories = () => {
     newReleases: "movie-categories-releases",
     awardWinners: "movie-categories-awards",
     familySelection: "movie-categories-family-selection",
-    releasesSelection: "movie-categories-releases-selection",
     awardsSelection: "movie-categories-awards-selection",
   };
 
@@ -183,14 +190,16 @@ const MovieCategories = () => {
 
         const randomFamily = getComponentData<string[]>(CACHE_KEYS.familySelection) ||
           (() => { const r = getRandomTitles(allFamilyFavorites, 3); setComponentData(CACHE_KEYS.familySelection, r); return r; })();
-        const randomReleases = getComponentData<string[]>(CACHE_KEYS.releasesSelection) ||
-          (() => { const r = getRandomTitles(allNewReleases, 3); setComponentData(CACHE_KEYS.releasesSelection, r); return r; })();
         const randomAwards = getComponentData<string[]>(CACHE_KEYS.awardsSelection) ||
           (() => { const r = getRandomTitles(allAwardWinners, 3); setComponentData(CACHE_KEYS.awardsSelection, r); return r; })();
 
-        const [familyData, releasesData, awardsData] = await Promise.all([
+        // "New Releases" — fetch actual latest safe movies from OMDB (year-filtered)
+        const latestMovies = latestMoviesCache ?? await fetchLatestSafeMovies(3);
+        if (!latestMoviesCache) latestMoviesCache = latestMovies;
+        const releasesData = latestMovies.slice(0, 3).map(movieToCard);
+
+        const [familyData, awardsData] = await Promise.all([
           Promise.all(randomFamily.map(toCard)),
-          Promise.all(randomReleases.map(toCard)),
           Promise.all(randomAwards.map(toCard)),
         ]);
 

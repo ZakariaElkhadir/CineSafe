@@ -2,7 +2,7 @@
 import Slider from "@/components/slider";
 import { SearchBar } from "@/components/search-bar";
 import { useState } from "react";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, Sparkles } from "lucide-react";
 import MovieGrid from "../../components/movies/movie-grid";
 
 const options = ["All", "Movies", "Animation", "Comedy", "Adventure"];
@@ -89,7 +89,10 @@ function Explore() {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-white">Browse Movies</h2>
-              <span className="text-sm text-gray-500">Showing family-safe titles</span>
+              <span className="text-sm text-gray-500 flex items-center gap-1.5">
+                <Sparkles size={14} className="text-purple-400" />
+                AI-powered family-safe curation
+              </span>
             </div>
             <MovieGrid />
           </div>

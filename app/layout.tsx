@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import { Poppins } from "next/font/google";
 import { MovieCacheProvider } from "@/contexts/MovieCacheContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { ChatProvider } from "@/contexts/ChatContext";
+import { ChatBubble } from "@/components/chat-bubble";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -41,9 +43,12 @@ export default function RootLayout({
       <body className={`${poppins.variable} ${geistSans.variable} font-[var(--font-poppins)] antialiased bg-[hsl(220,20%,8%)]`}>
         <MovieCacheProvider>
           <FavoritesProvider>
-            <SideBar />
-            {children}
-            <Footer />
+            <ChatProvider>
+              <SideBar />
+              {children}
+              <Footer />
+              <ChatBubble />
+            </ChatProvider>
           </FavoritesProvider>
         </MovieCacheProvider>
       </body>

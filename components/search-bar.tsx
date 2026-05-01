@@ -1,10 +1,11 @@
 "use client";
 
-import { Search, Loader2, Film, X } from "lucide-react";
+import { Search, Loader2, Film, X, Sparkles } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { searchMovies, SearchResult, improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";
 import Image from "next/image";
+import { AILoadingHorizontal } from "./ai-loading";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
@@ -25,8 +26,37 @@ export function SearchBar() {
     }
     setIsLoading(true);
     setHasSearched(false);
-    const { results: found } = await searchMovies(q);
-    setResults(found);
+
+    // If query looks like natural language, use AI search
+    const isNaturalLanguage = q.split(" ").length > 3 || 
+                             q.toLowerCase().includes("for") || 
+                             q.toLowerCase().includes("about") || 
+                             q.toLowerCase().includes("like") ||
+                             q.toLowerCase().includes("movies");
+
+    if (isNaturalLanguage) {
+      try {
+        const res = await fetch("/api/ai/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: q }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setResults(data.results);
+        } else {
+          const { results: found } = await searchMovies(q);
+          setResults(found);
+        }
+      } catch (err) {
+        const { results: found } = await searchMovies(q);
+        setResults(found);
+      }
+    } else {
+      const { results: found } = await searchMovies(q);
+      setResults(found);
+    }
+
     setHasSearched(true);
     setIsPanelOpen(true);
     setIsLoading(false);
@@ -84,8 +114,8 @@ export function SearchBar() {
         <input
           ref={inputRef}
           type="text"
-          placeholder="Search movies..."
-          className="w-full pl-9 pr-9 py-2 bg-gray-800/80 border border-gray-700 hover:border-cyan-500/50 focus:border-cyan-500 rounded-full text-sm text-white placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/20"
+          placeholder="Search movies with AI..."
+          className="w-full pl-9 pr-20 py-2 bg-gray-800/80 border border-gray-700 hover:border-cyan-500/50 focus:border-cyan-500 rounded-full text-sm text-white placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/20"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -94,7 +124,13 @@ export function SearchBar() {
           aria-autocomplete="list"
           aria-expanded={showPanel}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+          {!query && (
+            <span className="flex items-center gap-1 px-1.5 py-0.5 bg-purple-500/10 border border-purple-500/20 rounded text-[10px] text-purple-400 font-bold tracking-tight">
+              <Sparkles size={10} />
+              AI
+            </span>
+          )}
           {isLoading ? (
             <Loader2 className="h-4 w-4 text-cyan-400 animate-spin" />
           ) : query ? (
@@ -109,9 +145,8 @@ export function SearchBar() {
       {showPanel && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
           {isLoading ? (
-            <div className="flex items-center justify-center gap-2 py-6 text-gray-400 text-sm">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Searching...
+            <div className="p-4">
+              <AILoadingHorizontal label="Searching with AI..." />
             </div>
           ) : results.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 gap-2 text-gray-500">

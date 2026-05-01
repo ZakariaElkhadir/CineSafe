@@ -11,16 +11,16 @@ const features = [
     color: "from-cyan-500 to-teal-500",
   },
   {
-    icon: Star,
-    title: "Top Rated",
-    desc: "Curated by IMDB ratings",
-    color: "from-amber-500 to-orange-500",
+    icon: Sparkles,
+    title: "AI Smart Search",
+    desc: "Intelligent movie discovery",
+    color: "from-purple-500 to-pink-500",
   },
   {
-    icon: Sparkles,
-    title: "All Genres",
-    desc: "Animation, adventure, comedy & more",
-    color: "from-purple-500 to-pink-500",
+    icon: Compass,
+    title: "Curated Lists",
+    desc: "Hand-picked for families",
+    color: "from-amber-500 to-orange-500",
   },
 ];
 
@@ -38,9 +38,15 @@ const HomePage = () => {
           <div className="absolute bottom-0 left-1/4 w-96 h-48 bg-teal-500/5 rounded-full blur-3xl" />
 
           <div className="relative z-10 px-6 md:px-12 py-16 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-xs font-medium mb-6">
-              <Shield size={12} />
-              Family-safe movie discovery
+            <div className="flex flex-wrap gap-2 mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-xs font-medium">
+                <Shield size={12} />
+                Family-safe movie discovery
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-400 text-xs font-medium">
+                <Sparkles size={12} />
+                Powered by AI
+              </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-5 leading-tight">
               Find movies{" "}
@@ -48,8 +54,8 @@ const HomePage = () => {
               will love
             </h1>
             <p className="text-lg text-gray-400 mb-8 max-w-xl leading-relaxed">
-              CineSafe curates G, PG & PG-13 films so you can discover great
-              content without worrying about what&apos;s in it.
+              CineSafe uses <span className="text-white font-medium">advanced AI</span> to curate G, PG & PG-13 films so you can discover great
+              content with intelligent safety filtering.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/explore">

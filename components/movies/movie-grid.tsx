@@ -1,93 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { useMovieCache } from "@/contexts/MovieCacheContext";
+import { fetchLatestSafeMovies } from "@/app/api/MoviesData";
+import { Movie } from "@/app/api/MoviesData";
 import { MovieCard } from "./movie-card";
-import { Film } from "lucide-react";
+import { Film, RefreshCw } from "lucide-react";
 
-interface MovieData {
-  title: string;
-  year: string;
-  image: string;
-  href: string;
-  key: string;
-}
+const CACHE_KEY = "movie-grid-latest";
 
-const allPossibleMovies = [
-  "The Chronicles of Narnia: The Voyage of the Dawn Treader",
-  "Shrek",
-  "Finding Nemo",
-  "The Incredibles",
-  "Toy Story",
-  "Toy Story 2",
-  "Monsters, Inc.",
-  "Up",
-  "Kung Fu Panda",
-  "How to Train Your Dragon",
-  "The Lego Movie",
-  "Frozen",
-  "Tangled",
-  "Moana",
-  "Inside Out",
-  "Coco",
-  "Ratatouille",
-  "Wall-E",
-  "Brave",
-  "Encanto",
-];
-
-function getRandomTitles(source: string[], count: number) {
-  return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
-}
-
-const CACHE_KEY = "movie-grid-data";
+// Simple in-memory session cache (survives re-renders, resets on page refresh)
+let sessionCache: Movie[] | null = null;
 
 const MovieGrid: React.FC = () => {
-  const { getMovie, getComponentData, setComponentData } = useMovieCache();
-  const [movieData, setMovieData] = useState<MovieData[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRandomMovies = async () => {
-      const cachedData = getComponentData<MovieData[]>(CACHE_KEY);
-      if (cachedData) {
-        setMovieData(cachedData);
+    const load = async () => {
+      // Use session cache to avoid re-fetching on re-renders
+      if (sessionCache) {
+        setMovies(sessionCache);
         setIsLoading(false);
         return;
       }
-
       try {
         setIsLoading(true);
-        const randomMovies = getRandomTitles(allPossibleMovies, 8);
-        const data = await Promise.all(
-          randomMovies.map(async (name) => {
-            const movie = await getMovie(name);
-            return {
-              title: movie?.Title || name,
-              year: movie?.Year || "",
-              image: movie?.Poster || "/default-poster.jpg",
-              href: `/movies/${movie?.imdbID || ""}`,
-              key: movie?.imdbID || name,
-            };
-          })
-        );
-        const valid = data.filter((m) => m.href !== "/movies/");
-        setMovieData(valid);
-        setComponentData(CACHE_KEY, valid);
+        const latest = await fetchLatestSafeMovies(12);
+        sessionCache = latest;
+        setMovies(latest);
       } catch (err) {
-        setError("Failed to fetch movies");
+        setError("Failed to fetch latest movies");
         console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchRandomMovies();
-  }, [getMovie, getComponentData, setComponentData]);
+    load();
+  }, []);
 
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(12)].map((_, i) => (
           <div key={i} className="rounded-xl overflow-hidden bg-gray-800 animate-pulse">
             <div className="aspect-[2/3] bg-gray-700" />
             <div className="p-2.5">
@@ -100,26 +53,34 @@ const MovieGrid: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error || movies.length === 0) {
     return (
-      <div className="flex items-center justify-center py-16 text-gray-500 gap-2">
-        <Film className="h-5 w-5" />
-        {error}
+      <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-500">
+        <Film className="h-8 w-8" />
+        <p className="text-sm">{error || "No movies found"}</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      {movieData.map((movie) => (
-        <MovieCard
-          key={movie.key}
-          title={movie.title}
-          year={movie.year}
-          image={movie.image}
-          href={movie.href}
-        />
-      ))}
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-xs text-gray-500 flex items-center gap-1.5">
+          <RefreshCw size={11} />
+          Showing family-safe releases from {new Date().getFullYear() - 1}–{new Date().getFullYear()}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {movies.map((movie) => (
+          <MovieCard
+            key={movie.imdbID}
+            title={movie.Title}
+            year={movie.Year}
+            image={movie.Poster || ""}
+            href={`/movies/${movie.imdbID}`}
+          />
+        ))}
+      </div>
     </div>
   );
 };
