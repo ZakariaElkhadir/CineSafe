@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleEllipsis, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { CircleEllipsis, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMovieCache } from "@/contexts/MovieCacheContext";
 import { improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";

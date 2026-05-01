@@ -4,7 +4,7 @@ import { Movie } from "@/app/api/MoviesData";
 import { MovieCard } from "./movie-card";
 import { Film, RefreshCw } from "lucide-react";
 
-const CACHE_KEY = "movie-grid-latest";
+// No unused CACHE_KEY here
 
 // Simple in-memory session cache (survives re-renders, resets on page refresh)
 let sessionCache: Movie[] | null = null;

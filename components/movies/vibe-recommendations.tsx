@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles, ArrowRight, Film } from "lucide-react";
+import { Sparkles, Film } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -105,7 +105,7 @@ export function VibeRecommendations({ movie }: VibeRecommendationsProps) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                    <p className="text-[10px] text-purple-300 font-bold uppercase tracking-wider mb-1">The Vibe</p>
-                   <p className="text-[11px] text-gray-200 line-clamp-3 italic">"{s.vibe}"</p>
+                   <p className="text-[11px] text-gray-200 line-clamp-3 italic">&quot;{s.vibe}&quot;</p>
                 </div>
               </div>
               <div>

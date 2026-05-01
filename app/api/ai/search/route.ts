@@ -57,7 +57,7 @@ Respond ONLY with this JSON array of strings, no other text:
             };
           }
           return null;
-        } catch (e) {
+        } catch {
           return null;
         }
       })

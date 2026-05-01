@@ -1,5 +1,5 @@
 import React from "react";
-import { Compass, Shield, Star, Sparkles } from "lucide-react";
+import { Compass, Shield, Sparkles } from "lucide-react";
 import Link from "next/link";
 import MovieCategories from "@/components/movies/movieCategories";
 

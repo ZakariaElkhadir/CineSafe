@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useChat } from "@/contexts/ChatContext";
 import { motion } from "framer-motion";
 

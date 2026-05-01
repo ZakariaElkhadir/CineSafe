@@ -48,7 +48,7 @@ export function SearchBar() {
           const { results: found } = await searchMovies(q);
           setResults(found);
         }
-      } catch (err) {
+      } catch {
         const { results: found } = await searchMovies(q);
         setResults(found);
       }
@@ -122,7 +122,6 @@ export function SearchBar() {
           onFocus={() => { if (hasSearched && results.length > 0) setIsPanelOpen(true); }}
           aria-label="Search movies"
           aria-autocomplete="list"
-          aria-expanded={showPanel}
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {!query && (

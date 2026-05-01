@@ -40,7 +40,7 @@ export function ChatBubble() {
       if (!response.ok) throw new Error("Chat failed");
 
       const reader = response.body?.getReader();
-      const decoder = new TextEncoder().encode(""); // Just for reference
+      // Just for reference
       const assistantMessage: Message = { role: "assistant", content: "" };
       
       setMessages((prev) => [...prev, assistantMessage]);

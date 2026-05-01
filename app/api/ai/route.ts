@@ -6,8 +6,22 @@ const openai = new OpenAI({
   baseURL: "https://integrate.api.nvidia.com/v1",
 });
 
+// Analysis result type
+interface AnalysisResult {
+  violence: { score: number; explanation: string };
+  language: { score: number; explanation: string };
+  scariness: { score: number; explanation: string };
+  mature_themes: { score: number; explanation: string };
+  safe_age: number;
+  parent_tip: string;
+  overall_verdict: string;
+  conversation_starters: string[];
+  positive_messages: string[];
+  role_models: string[];
+}
+
 // Simple in-memory cache
-const analysisCache = new Map<string, any>();
+const analysisCache = new Map<string, AnalysisResult>();
 
 export async function POST(req: NextRequest) {
   const { title, plot, rating, year, genre, imdbID } = await req.json();

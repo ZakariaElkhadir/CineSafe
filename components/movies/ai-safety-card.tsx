@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Shield, Info, AlertTriangle, CheckCircle2, XCircle, Sparkles, Heart, MessageSquare, Copy, Check } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface SafetyScore {
   score: number;
