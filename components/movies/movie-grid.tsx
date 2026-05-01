@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useMovieCache } from "@/contexts/MovieCacheContext";
 import { MovieCard } from "./movie-card";
+import { Film } from "lucide-react";
 
 interface MovieData {
   title: string;
+  year: string;
   image: string;
   href: string;
   key: string;
@@ -26,6 +28,10 @@ const allPossibleMovies = [
   "Moana",
   "Inside Out",
   "Coco",
+  "Ratatouille",
+  "Wall-E",
+  "Brave",
+  "Encanto",
 ];
 
 function getRandomTitles(source: string[], count: number) {
@@ -57,14 +63,16 @@ const MovieGrid: React.FC = () => {
             const movie = await getMovie(name);
             return {
               title: movie?.Title || name,
+              year: movie?.Year || "",
               image: movie?.Poster || "/default-poster.jpg",
               href: `/movies/${movie?.imdbID || ""}`,
               key: movie?.imdbID || name,
             };
           })
         );
-        setMovieData(data);
-        setComponentData(CACHE_KEY, data);
+        const valid = data.filter((m) => m.href !== "/movies/");
+        setMovieData(valid);
+        setComponentData(CACHE_KEY, valid);
       } catch (err) {
         setError("Failed to fetch movies");
         console.error(err);
@@ -78,32 +86,40 @@ const MovieGrid: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="rounded-xl overflow-hidden bg-gray-800 animate-pulse">
+            <div className="aspect-[2/3] bg-gray-700" />
+            <div className="p-2.5">
+              <div className="h-4 bg-gray-700 rounded w-3/4" />
+              <div className="h-3 bg-gray-700 rounded w-1/3 mt-1.5" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
+      <div className="flex items-center justify-center py-16 text-gray-500 gap-2">
+        <Film className="h-5 w-5" />
         {error}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {movieData.map((movie) => (
-          <MovieCard
-            key={movie.key}
-            title={movie.title}
-            image={movie.image}
-            href={movie.href}
-          />
-        ))}
-      </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      {movieData.map((movie) => (
+        <MovieCard
+          key={movie.key}
+          title={movie.title}
+          year={movie.year}
+          image={movie.image}
+          href={movie.href}
+        />
+      ))}
     </div>
   );
 };

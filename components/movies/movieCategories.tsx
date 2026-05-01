@@ -1,11 +1,13 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useMovieCache } from "@/contexts/MovieCacheContext";
 import Image from "next/image";
 import Link from "next/link";
 import { improvePosterQuality } from "../../app/api/MoviesData";
-import { Star, Calendar, Award, Shield, Info } from "lucide-react";
+import { Star, Calendar, Award, Shield, ChevronRight, Film } from "lucide-react";
 import LoadingCategorySection from "./LoadingCategorySection";
+import { FavoritesButton } from "./favorites-button";
 
 interface MovieCardProps {
   title: string;
@@ -21,48 +23,64 @@ const MovieCard: React.FC<MovieCardProps> = ({
   title,
   year,
   rating,
-  safetyScore,
   description,
   image,
   imdbID,
 }) => {
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-cyan-400 transition-all h-full flex flex-col">
-      <div className="relative w-full h-48">
-        <Image
-          src={improvePosterQuality(image)}
-          alt={title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 33vw"
-          priority
-        />
-        <div className="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded-full text-sm">
-          {safetyScore}/100
+    <div className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl overflow-hidden hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300 h-full flex flex-col">
+      {/* Poster */}
+      <div className="relative w-full h-52 overflow-hidden flex-shrink-0">
+        {image && image !== "N/A" && image !== "/default-poster.jpg" ? (
+          <Image
+            src={improvePosterQuality(image)}
+            alt={title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, 33vw"
+            unoptimized
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full bg-gray-700">
+            <Film className="h-12 w-12 text-gray-600" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
+        {/* Favorites button */}
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <FavoritesButton
+            movie={{ imdbID, Title: title, Poster: image, Year: year }}
+            size="sm"
+          />
+        </div>
+        {/* Safe badge */}
+        <div className="absolute bottom-2 left-2 flex items-center gap-1 px-2 py-0.5 bg-cyan-500/20 border border-cyan-500/30 rounded-full">
+          <Shield className="h-3 w-3 text-cyan-400" />
+          <span className="text-xs text-cyan-400 font-medium">Safe</span>
         </div>
       </div>
+
+      {/* Info */}
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="font-bold text-lg mb-2 text-white truncate">{title}</h3>
-        <div className="flex items-center space-x-4 text-sm text-gray-300 mb-3">
-          <div className="flex items-center">
-            <Calendar className="h-4 w-4 mr-1" />
+        <h3 className="font-semibold text-base mb-1.5 text-white truncate">{title}</h3>
+        <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
             {year}
           </div>
-          <div className="flex items-center">
-            <Star className="h-4 w-4 mr-1" />
-            {rating}
-          </div>
+          {rating && rating !== "N/A" && (
+            <div className="flex items-center gap-1">
+              <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
+              <span className="text-amber-400">{rating}</span>
+            </div>
+          )}
         </div>
-        <p className="text-sm text-gray-400 mb-4 line-clamp-3">{description}</p>
-        <div className="flex items-center justify-between mt-auto">
-          <div className="flex items-center text-cyan-400">
-            <Shield className="h-4 w-4 mr-1" />
-            <span className="text-sm">Family Safe</span>
-          </div>
+        <p className="text-xs text-gray-500 mb-4 line-clamp-2 leading-relaxed">{description}</p>
+        <div className="mt-auto">
           <Link href={`/movies/${imdbID}`}>
-            <button className="flex items-center text-sm text-white bg-gray-700 px-3 py-1 rounded-full hover:bg-gray-600">
-              <Info className="h-4 w-4 mr-1" />
-              Details
+            <button className="w-full flex items-center justify-center gap-1.5 text-sm text-white bg-gray-700/60 hover:bg-cyan-500/20 hover:text-cyan-400 border border-gray-600/50 hover:border-cyan-500/30 px-3 py-2 rounded-xl transition-all duration-200">
+              View Details
+              <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </Link>
         </div>
@@ -73,25 +91,25 @@ const MovieCard: React.FC<MovieCardProps> = ({
 
 interface CategorySectionProps {
   title: string;
+  icon: React.ReactNode;
   movies: MovieCardProps[];
 }
 
-const CategorySection: React.FC<CategorySectionProps> = ({ title, movies }) => {
+const CategorySection: React.FC<CategorySectionProps> = ({ title, icon, movies }) => {
   return (
-    <div className="mb-12">
-      <div className="flex items-center mb-6">
-        {title === "Family Favorites" && (
-          <Star className="h-6 w-6 text-cyan-400 mr-2" />
-        )}
-        {title === "New Releases" && (
-          <Calendar className="h-6 w-6 text-cyan-400 mr-2" />
-        )}
-        {title === "Award Winners" && (
-          <Award className="h-6 w-6 text-cyan-400 mr-2" />
-        )}
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
+    <div className="mb-14">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center">
+            {icon}
+          </div>
+          <h2 className="text-xl font-bold text-white">{title}</h2>
+        </div>
+        <Link href="/explore" className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
+          See all <ChevronRight size={14} />
+        </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
         {movies.map((movie, index) => (
           <MovieCard key={index} {...movie} />
         ))}
@@ -100,49 +118,24 @@ const CategorySection: React.FC<CategorySectionProps> = ({ title, movies }) => {
   );
 };
 
-// Utility to shuffle and pick random items
 function getRandomTitles(source: string[], count: number) {
   return [...source].sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
-// Demo component with sample data
 const MovieCategories = () => {
-  // Larger lists for each category
   const allFamilyFavorites = [
-    "flow",
-    "Home Alone",
-    "Zathura",
-    "Matilda",
-    "Paddington",
-    "Akeelah and the Bee",
-    "The Mitchells vs. the Machines",
-    "Shrek",
-    "Despicable Me",
-    "Night at the Museum",
-    "Minions",
+    "flow", "Home Alone", "Zathura", "Matilda", "Paddington",
+    "Akeelah and the Bee", "The Mitchells vs. the Machines",
+    "Shrek", "Despicable Me", "Night at the Museum", "Minions",
   ];
   const allNewReleases = [
-    "The Tiger's Apprentice",
-    "Wallace & Gromit: Vengeance Most Fowl",
-    "Kung Fu Panda 4",
-    "Soul",
-    "Encanto",
-    "Moana 2",
-    "Mufasa: The Lion King",
-    "Paddington in Peru",
-    "How to Train Your Dragon",
+    "The Tiger's Apprentice", "Wallace & Gromit: Vengeance Most Fowl",
+    "Kung Fu Panda 4", "Soul", "Encanto", "Moana 2",
+    "Mufasa: The Lion King", "Paddington in Peru", "How to Train Your Dragon",
   ];
   const allAwardWinners = [
-    "The Lion King",
-    "Finding Nemo",
-    "Up",
-    "Spirited Away",
-    "Coco",
-    "The Incredibles",
-    "Spirited Away",
-    "Finding Nemo",
-    "Toy Story 3",
-    "Frozen",
+    "The Lion King", "Finding Nemo", "Up", "Spirited Away",
+    "Coco", "The Incredibles", "Toy Story 3", "Frozen", "Ratatouille",
   ];
 
   const { getMovie, getComponentData, setComponentData } = useMovieCache();
@@ -162,7 +155,6 @@ const MovieCategories = () => {
 
   useEffect(() => {
     const fetchMovies = async () => {
-      // Check if data is already cached
       const cachedFamily = getComponentData<MovieCardProps[]>(CACHE_KEYS.familyFavorites);
       const cachedReleases = getComponentData<MovieCardProps[]>(CACHE_KEYS.newReleases);
       const cachedAwards = getComponentData<MovieCardProps[]>(CACHE_KEYS.awardWinners);
@@ -176,84 +168,38 @@ const MovieCategories = () => {
       }
 
       try {
-        // Get or generate random selections
-        let randomFamily: string[];
-        let randomReleases: string[];
-        let randomAwards: string[];
+        const toCard = async (name: string): Promise<MovieCardProps> => {
+          const d = await getMovie(name);
+          return {
+            title: d?.Title || name,
+            year: d?.Year || "",
+            rating: d?.imdbRating || "",
+            safetyScore: d?.Metascore || "",
+            description: d?.Plot || "",
+            image: d?.Poster || "",
+            imdbID: d?.imdbID || "",
+          };
+        };
 
-        const cachedFamilySelection = getComponentData<string[]>(CACHE_KEYS.familySelection);
-        const cachedReleasesSelection = getComponentData<string[]>(CACHE_KEYS.releasesSelection);
-        const cachedAwardsSelection = getComponentData<string[]>(CACHE_KEYS.awardsSelection);
+        const randomFamily = getComponentData<string[]>(CACHE_KEYS.familySelection) ||
+          (() => { const r = getRandomTitles(allFamilyFavorites, 3); setComponentData(CACHE_KEYS.familySelection, r); return r; })();
+        const randomReleases = getComponentData<string[]>(CACHE_KEYS.releasesSelection) ||
+          (() => { const r = getRandomTitles(allNewReleases, 3); setComponentData(CACHE_KEYS.releasesSelection, r); return r; })();
+        const randomAwards = getComponentData<string[]>(CACHE_KEYS.awardsSelection) ||
+          (() => { const r = getRandomTitles(allAwardWinners, 3); setComponentData(CACHE_KEYS.awardsSelection, r); return r; })();
 
-        if (cachedFamilySelection) {
-          randomFamily = cachedFamilySelection;
-        } else {
-          randomFamily = getRandomTitles(allFamilyFavorites, 3);
-          setComponentData(CACHE_KEYS.familySelection, randomFamily);
-        }
+        const [familyData, releasesData, awardsData] = await Promise.all([
+          Promise.all(randomFamily.map(toCard)),
+          Promise.all(randomReleases.map(toCard)),
+          Promise.all(randomAwards.map(toCard)),
+        ]);
 
-        if (cachedReleasesSelection) {
-          randomReleases = cachedReleasesSelection;
-        } else {
-          randomReleases = getRandomTitles(allNewReleases, 3);
-          setComponentData(CACHE_KEYS.releasesSelection, randomReleases);
-        }
-
-        if (cachedAwardsSelection) {
-          randomAwards = cachedAwardsSelection;
-        } else {
-          randomAwards = getRandomTitles(allAwardWinners, 3);
-          setComponentData(CACHE_KEYS.awardsSelection, randomAwards);
-        }
-
-        const familyFavoritesData = await Promise.all(
-          randomFamily.map(async (name) => {
-            const movieDetails = await getMovie(name);
-            return {
-              title: name,
-              year: movieDetails?.Year || "",
-              rating: movieDetails?.imdbRating || "",
-              safetyScore: movieDetails?.Metascore || "",
-              description: movieDetails?.Plot || "",
-              image: movieDetails?.Poster || "",
-              imdbID: movieDetails?.imdbID || "",
-            };
-          })
-        );
-        const newReleasesData = await Promise.all(
-          randomReleases.map(async (name) => {
-            const movieDetails = await getMovie(name);
-            return {
-              title: name,
-              year: movieDetails?.Year || "",
-              rating: movieDetails?.imdbRating || "",
-              safetyScore: movieDetails?.Metascore || "",
-              description: movieDetails?.Plot || "",
-              image: movieDetails?.Poster || "",
-              imdbID: movieDetails?.imdbID || "",
-            };
-          })
-        );
-        const awardWinnersData = await Promise.all(
-          randomAwards.map(async (name) => {
-            const movieDetails = await getMovie(name);
-            return {
-              title: name,
-              year: movieDetails?.Year || "",
-              rating: movieDetails?.imdbRating || "",
-              safetyScore: movieDetails?.Metascore || "",
-              description: movieDetails?.Plot || "",
-              image: movieDetails?.Poster || "",
-              imdbID: movieDetails?.imdbID || "",
-            };
-          })
-        );
-        setFamilyFavorites(familyFavoritesData);
-        setNewReleases(newReleasesData);
-        setAwardWinners(awardWinnersData);
-        setComponentData(CACHE_KEYS.familyFavorites, familyFavoritesData);
-        setComponentData(CACHE_KEYS.newReleases, newReleasesData);
-        setComponentData(CACHE_KEYS.awardWinners, awardWinnersData);
+        setFamilyFavorites(familyData);
+        setNewReleases(releasesData);
+        setAwardWinners(awardsData);
+        setComponentData(CACHE_KEYS.familyFavorites, familyData);
+        setComponentData(CACHE_KEYS.newReleases, releasesData);
+        setComponentData(CACHE_KEYS.awardWinners, awardsData);
       } catch (error) {
         console.error("Error fetching movie data:", error);
       } finally {
@@ -262,11 +208,12 @@ const MovieCategories = () => {
     };
 
     fetchMovies();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getMovie, getComponentData, setComponentData]);
 
   if (isLoading) {
     return (
-      <div className="p-8 bg-gray-900">
+      <div className="px-6 md:px-12 py-8">
         <LoadingCategorySection />
         <LoadingCategorySection />
         <LoadingCategorySection />
@@ -275,10 +222,22 @@ const MovieCategories = () => {
   }
 
   return (
-    <div className="p-8 bg-gray-900">
-      <CategorySection title="Family Favorites" movies={familyFavorites} />
-      <CategorySection title="New Releases" movies={newReleases} />
-      <CategorySection title="Award Winners" movies={awardWinners} />
+    <div className="px-6 md:px-12 py-8">
+      <CategorySection
+        title="Family Favorites"
+        icon={<Star className="h-4 w-4 text-cyan-400" />}
+        movies={familyFavorites}
+      />
+      <CategorySection
+        title="New Releases"
+        icon={<Calendar className="h-4 w-4 text-cyan-400" />}
+        movies={newReleases}
+      />
+      <CategorySection
+        title="Award Winners"
+        icon={<Award className="h-4 w-4 text-cyan-400" />}
+        movies={awardWinners}
+      />
     </div>
   );
 };

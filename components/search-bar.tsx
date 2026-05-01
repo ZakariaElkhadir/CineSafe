@@ -1,109 +1,175 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { fetchMovieByName } from "@/app/api/MoviesData";
-import { Movie } from "@/app/api/MoviesData";
+import { Search, Loader2, Film, X } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { searchMovies, SearchResult, improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";
 import Image from "next/image";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
-  const [movie, setMovie] = useState<Movie | null>(null);
-  const [error, setError] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [hasSearched, setHasSearched] = useState(false);
   const searchPanelRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (query) {
-        try {
-          const fetchedMovie = await fetchMovieByName(query);
-          if (fetchedMovie) {
-            setMovie(fetchedMovie);
-            setError("");
-            setIsPanelOpen(true);
-          } else {
-            setError("No safe movie found with that name.");
-            setMovie(null);
-            setIsPanelOpen(true);
-          }
-        } catch (err) {
-          setError("An error occurred while fetching data.");
-          console.error(err);
-          setIsPanelOpen(true);
-        }
-      } else {
-        setMovie(null);
-        setError("");
-        setIsPanelOpen(false);
-      }
-    }, 300); // 300ms delay
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [query]);
-
-  // Close the panel when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchPanelRef.current &&
-        !searchPanelRef.current.contains(event.target as Node)
-      ) {
-        setIsPanelOpen(false);
-      }
-    };
-
-    if (isPanelOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+  const doSearch = useCallback(async (q: string) => {
+    if (!q.trim()) {
+      setResults([]);
+      setIsPanelOpen(false);
+      setHasSearched(false);
+      return;
     }
+    setIsLoading(true);
+    setHasSearched(false);
+    const { results: found } = await searchMovies(q);
+    setResults(found);
+    setHasSearched(true);
+    setIsPanelOpen(true);
+    setIsLoading(false);
+    setActiveIndex(-1);
+  }, []);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+  // Debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      doSearch(query);
+    }, 450);
+    return () => clearTimeout(timer);
+  }, [query, doSearch]);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchPanelRef.current && !searchPanelRef.current.contains(e.target as Node)) {
+        setIsPanelOpen(false);
+      }
     };
-  }, [isPanelOpen]);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isPanelOpen) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.min(i + 1, results.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.max(i - 1, -1));
+    } else if (e.key === "Escape") {
+      setIsPanelOpen(false);
+      setActiveIndex(-1);
+    }
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setIsPanelOpen(false);
+    inputRef.current?.focus();
+  };
+
+  const showPanel = isPanelOpen && (isLoading || hasSearched);
 
   return (
-    <div className="relative flex-grow" ref={searchPanelRef}>
+    <div className="relative flex-grow max-w-lg" ref={searchPanelRef}>
+      {/* Input */}
       <div className="relative">
-        <Input
-          type="search"
-          placeholder="Search for a movie..."
-          className="pl-3 pr-10   lg:w-[25rem] bg-gray-800 rounded-3xl"
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Search movies..."
+          className="w-full pl-9 pr-9 py-2 bg-gray-800/80 border border-gray-700 hover:border-cyan-500/50 focus:border-cyan-500 rounded-full text-sm text-white placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/20"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => { if (hasSearched && results.length > 0) setIsPanelOpen(true); }}
+          aria-label="Search movies"
+          aria-autocomplete="list"
+          aria-expanded={showPanel}
         />
-        <button
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-700 rounded-full transition-colors"
-          onClick={() => setIsPanelOpen(!isPanelOpen)}
-        >
-          <Search className="h-4 w-4 text-gray-200" />
-        </button>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 text-cyan-400 animate-spin" />
+          ) : query ? (
+            <button onClick={clearSearch} className="text-gray-400 hover:text-white transition-colors">
+              <X className="h-4 w-4" />
+            </button>
+          ) : null}
+        </div>
       </div>
 
-      {/* Display search results or error */}
-      {isPanelOpen && (movie || error) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 rounded-lg shadow-lg z-10">
-          {error && <p className="text-red-500 p-2">{error}</p>}
-          {movie && (
-            <Link href={`/movies/${movie.imdbID}`}>
-              <div className="p-4 cursor-pointer hover:bg-gray-700">
-                <h2 className="text-lg font-semibold text-white">
-                  {movie.Title}
-                </h2>
-                <p className="text-sm text-gray-400">{movie.Year}</p>
-                {movie.Poster && (
-                  <Image
-                    width={128}
-                    height={192}
-                    src={movie.Poster}
-                    alt={`${movie.Title} Poster`}
-                    className="w-32 h-48 object-cover mt-2 rounded-lg"
-                  />
-                )}
+      {/* Results panel */}
+      {showPanel && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 py-6 text-gray-400 text-sm">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Searching...
+            </div>
+          ) : results.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 gap-2 text-gray-500">
+              <Film className="h-8 w-8" />
+              <p className="text-sm">No family-safe movies found for &quot;{query}&quot;</p>
+            </div>
+          ) : (
+            <>
+              <div className="px-3 py-2 border-b border-gray-800">
+                <p className="text-xs text-gray-500">{results.length} result{results.length !== 1 ? "s" : ""} for &quot;{query}&quot;</p>
               </div>
-            </Link>
+              <ul className="max-h-[380px] overflow-y-auto divide-y divide-gray-800/50 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                {results.map((movie, idx) => (
+                  <li key={movie.imdbID}>
+                    <Link
+                      href={`/movies/${movie.imdbID}`}
+                      onClick={() => { setIsPanelOpen(false); setQuery(""); }}
+                    >
+                      <div
+                        className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors ${
+                          activeIndex === idx ? "bg-gray-700" : "hover:bg-gray-800"
+                        }`}
+                      >
+                        {/* Poster */}
+                        <div className="relative w-10 h-14 rounded-md overflow-hidden flex-shrink-0 bg-gray-800">
+                          {movie.Poster && movie.Poster !== "N/A" ? (
+                            <Image
+                              src={improvePosterQuality(movie.Poster)}
+                              alt={movie.Title}
+                              fill
+                              className="object-cover"
+                              sizes="40px"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <Film className="h-4 w-4 text-gray-600" />
+                            </div>
+                          )}
+                        </div>
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{movie.Title}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs text-gray-400">{movie.Year}</span>
+                            {movie.Type && (
+                              <span className="text-xs px-1.5 py-0.5 bg-gray-700 text-gray-300 rounded capitalize">
+                                {movie.Type}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       )}

@@ -1,69 +1,80 @@
-'use client'
-import { Facebook, Instagram, Twitter } from 'lucide-react'
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+"use client";
+
+import { Facebook, Instagram, Twitter, Film, Mail } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <>
-      <style jsx>{`
-        .glow-border {
-          box-shadow: 0 -4px 10px -1px rgba(0, 255, 255, 0.2), 0 -2px 6px -1px rgba(0, 255, 255, 0.12);
-        }
-      `}</style>
-      <footer className="bg-gray-900 border-t-2 border-cyan-500 text-white py-8 glow-border">
-        <div className="container mx-auto px-4 pl-auto lg:pl-72">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">CineSafe</h3>
-              <p className="text-sm text-gray-400">&copy; 2025 CineSafe. All rights reserved.</p>
-              <p className="text-sm">
-                For business inquiries, contact me at{" "}
-                <a href="mailto:zelkhadir5@gmail.com" className="underline hover:text-cyan-500 transition-colors">
-                  zelkhadir5@gmail.com
-                </a>
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Quick Links</h3>
-              <nav className="flex flex-col space-y-2">
-                <Link href="/" className="text-sm hover:text-cyan-500 transition-colors">Home</Link>
-                <Link href="/about" className="text-sm hover:text-cyan-500 transition-colors">About</Link>
-                <Link href="/explore" className="text-sm hover:text-cyan-500 transition-colors">Explore</Link>
-                <Link href="#" className="text-sm hover:text-cyan-500 transition-colors">Contact</Link>
-              </nav>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Stay Connected</h3>
-              <div className="flex space-x-4">
-                <a href="#" className="hover:text-cyan-500 transition-colors" aria-label="Facebook">
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a href="#" className="hover:text-cyan-500 transition-colors" aria-label="Instagram">
-                  <Instagram className="w-6 h-6" />
-                </a>
-                <a href="#" className="hover:text-cyan-500 transition-colors" aria-label="Twitter">
-                  <Twitter className="w-6 h-6" />
-                </a>
+    <footer className="lg:pl-72 bg-[hsl(220,20%,6%)] border-t border-gray-800/80 text-white">
+      <div className="px-6 md:px-10 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {/* Brand */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-600 flex items-center justify-center">
+                <Film size={15} className="text-white" />
               </div>
-              <form className="space-y-2" onSubmit={(e) => e.preventDefault()}>
-                <label htmlFor="email-input" className="sr-only">Email address</label>
-                <Input
-                  id="email-input"
-                  type="email"
-                  placeholder="Enter your email"
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
-                />
-                <Button type="submit" className="w-full bg-cyan-500 hover:bg-cyan-600 text-white">
-                  Subscribe to Newsletter
-                </Button>
-              </form>
+              <span className="text-lg font-bold text-white">CineSafe</span>
+            </div>
+            <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
+              Discover family-safe movies rated G, PG, and PG-13. Curated for
+              families, powered by OMDB.
+            </p>
+            <p className="text-xs text-gray-600">© 2025 CineSafe. All rights reserved.</p>
+          </div>
+
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Navigation</h3>
+            <nav className="flex flex-col space-y-2.5">
+              {[
+                { href: "/", label: "Home" },
+                { href: "/explore", label: "Explore" },
+                { href: "/favorites", label: "My Favorites" },
+                { href: "/about", label: "About" },
+              ].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-sm text-gray-500 hover:text-cyan-400 transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Connect */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Connect</h3>
+            <div className="flex items-center gap-3">
+              {[
+                { icon: Facebook, label: "Facebook" },
+                { icon: Instagram, label: "Instagram" },
+                { icon: Twitter, label: "Twitter" },
+              ].map(({ icon: Icon, label }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-800 border border-gray-700/50 text-gray-400 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-gray-700 transition-all"
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Mail className="w-4 h-4 flex-shrink-0" />
+              <a
+                href="mailto:zelkhadir5@gmail.com"
+                className="hover:text-cyan-400 transition-colors"
+              >
+                zelkhadir5@gmail.com
+              </a>
             </div>
           </div>
         </div>
-      </footer>
-    </>
-  )
+      </div>
+    </footer>
+  );
 }
-

@@ -1,10 +1,18 @@
-import Image from 'next/image';
+import Image from "next/image";
 import { fetchMovieById } from "@/app/api/MoviesData";
-import { Suspense } from 'react';
-import { Star, Clock, Calendar, Users, Award, Clapperboard } from 'lucide-react';
+import { Suspense } from "react";
+import {
+  Star,
+  Clock,
+  Calendar,
+  Users,
+  Award,
+  Clapperboard,
+  ArrowLeft,
+  Shield,
+} from "lucide-react";
 import { improvePosterQuality } from "@/app/api/MoviesData";
-
-
+import Link from "next/link";
 
 export default async function MovieDetails({
   params,
@@ -14,7 +22,7 @@ export default async function MovieDetails({
   const { id } = await params;
 
   return (
-    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:pl-72">
+    <div className="min-h-screen lg:pl-72">
       <Suspense fallback={<MovieDetailsSkeleton />}>
         <MovieContent id={id} />
       </Suspense>
@@ -26,118 +34,196 @@ async function MovieContent({ id }: { id: string }) {
   const movie = await fetchMovieById(id);
 
   if (!movie) {
-    return <div className="text-center text-2xl text-gray-500">Movie not found</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <p className="text-2xl text-gray-400">Movie not found</p>
+        <p className="text-gray-600 text-sm">This movie may not meet our family-safe criteria.</p>
+        <Link href="/explore" className="mt-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold rounded-full transition-all text-sm">
+          Back to Explore
+        </Link>
+      </div>
+    );
   }
 
+  const ratingNum = parseFloat(movie.imdbRating);
+  const ratingPercent = isNaN(ratingNum) ? 0 : (ratingNum / 10) * 100;
+
   return (
-    <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="relative aspect-video sm:aspect-[21/9] lg:aspect-[21/8]">
+    <div className="pb-12">
+      {/* ─── Hero Banner ─── */}
+      <div className="relative h-[380px] md:h-[460px] overflow-hidden">
         <Image
-          src={movie.Poster ? improvePosterQuality(movie.Poster) : '/default-poster.jpg'}
+          src={movie.Poster ? improvePosterQuality(movie.Poster) : "/default-poster.jpg"}
           alt={`${movie.Title} Poster`}
-          layout="fill"
-          objectFit="cover"
+          fill
+          className="object-cover object-top brightness-40"
           priority
-          className="brightness-50"
+          unoptimized
         />
-        <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 lg:p-8 bg-gradient-to-t from-black to-transparent">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">{movie.Title}</h1>
-          <div className="flex flex-wrap items-center gap-2 text-white">
-            <CustomBadge>{movie.Year}</CustomBadge>
-            <CustomBadge>{movie.Rated}</CustomBadge>
-            <CustomBadge>{movie.Runtime}</CustomBadge>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,20%,8%)] via-[hsl(220,20%,8%)]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(220,20%,8%)]/60 to-transparent" />
+
+        {/* Back button */}
+        <div className="absolute top-6 left-6">
+          <Link href="/explore">
+            <button className="flex items-center gap-2 px-4 py-2 glass-dark rounded-full text-white text-sm font-medium hover:bg-white/10 transition-all">
+              <ArrowLeft size={16} />
+              Back
+            </button>
+          </Link>
+        </div>
+
+        {/* Title & badges */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+          <div className="flex flex-wrap gap-2 mb-3">
+            {movie.Genre.split(", ").map((g) => (
+              <span key={g} className="px-3 py-1 text-xs font-medium bg-white/10 border border-white/15 rounded-full text-gray-300 backdrop-blur-sm">
+                {g}
+              </span>
+            ))}
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">
+            {movie.Title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-1 text-xs bg-gray-800 text-gray-300 rounded-full border border-gray-700">
+              {movie.Year}
+            </span>
+            <span className="px-2.5 py-1 text-xs bg-cyan-500/15 text-cyan-400 rounded-full border border-cyan-500/30 font-medium">
+              {movie.Rated} ✓ Safe
+            </span>
+            <span className="px-2.5 py-1 text-xs bg-gray-800 text-gray-300 rounded-full border border-gray-700">
+              {movie.Runtime}
+            </span>
           </div>
         </div>
       </div>
-      
-      <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-        <div className="flex flex-wrap gap-2">
-          {movie.Genre.split(', ').map((genre: string, index: number) => (
-            <h3
-              key={index}
-              className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs sm:text-sm font-medium hover:bg-white/30 transition-colors border border-cyan-600"
-            >
-              {genre}
-            </h3>
-          ))}
-        </div>
 
-        <p className="text-sm sm:text-base lg:text-lg text-gray-700">{movie.Plot}</p>
+      {/* ─── Content ─── */}
+      <div className="px-4 md:px-10 py-8 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left: main info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Rating bar */}
+            <div className="p-5 bg-gray-800/40 rounded-2xl border border-gray-700/50">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+                  <span className="text-2xl font-bold text-white">{movie.imdbRating}</span>
+                  <span className="text-gray-500 text-sm">/10</span>
+                </div>
+                {movie.Metascore && movie.Metascore !== "N/A" && (
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <span>Metascore:</span>
+                    <span className={`px-2 py-0.5 rounded font-bold text-sm ${
+                      parseInt(movie.Metascore) >= 70 ? "bg-green-500/20 text-green-400" :
+                      parseInt(movie.Metascore) >= 50 ? "bg-yellow-500/20 text-yellow-400" :
+                      "bg-red-500/20 text-red-400"
+                    }`}>{movie.Metascore}</span>
+                  </div>
+                )}
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-amber-500 to-amber-400 h-2 rounded-full transition-all"
+                  style={{ width: `${ratingPercent}%` }}
+                />
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <InfoItem icon={<Star className="w-5 h-5 text-yellow-500" />} label="Rating" value={`${movie.imdbRating}/10`} />
-          <InfoItem icon={<Clock className="w-5 h-5 text-blue-500" />} label="Runtime" value={movie.Runtime} />
-          <InfoItem icon={<Calendar className="w-5 h-5 text-green-500" />} label="Released" value={movie.Released} />
-          <InfoItem icon={<Users className="w-5 h-5 text-purple-500" />} label="Director" value={movie.Director} />
-          <InfoItem icon={<Clapperboard className="w-5 h-5 text-red-500" />} label="Box Office" value={movie.BoxOffice || 'N/A'} />
-          <InfoItem icon={<Award className="w-5 h-5 text-amber-500" />} label="Awards" value={movie.Awards} />
-        </div>
+            {/* Plot */}
+            <div>
+              <h2 className="text-lg font-semibold text-white mb-3">Synopsis</h2>
+              <p className="text-gray-400 leading-relaxed">{movie.Plot}</p>
+            </div>
 
-        <div className="space-y-4">
-          <InfoSection title="Cast" content={movie.Actors} />
-          <InfoSection title="Writers" content={movie.Writer} />
+            {/* Cast & Crew */}
+            <div className="space-y-4">
+              <InfoSection
+                icon={<Users className="w-4 h-4 text-cyan-400" />}
+                title="Cast"
+                content={movie.Actors}
+              />
+              <InfoSection
+                icon={<Clapperboard className="w-4 h-4 text-cyan-400" />}
+                title="Director"
+                content={movie.Director}
+              />
+              <InfoSection
+                icon={<Clapperboard className="w-4 h-4 text-cyan-400" />}
+                title="Writers"
+                content={movie.Writer}
+              />
+            </div>
+          </div>
+
+          {/* Right: quick stats */}
+          <div className="space-y-3">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Details</h2>
+            <StatCard icon={<Clock className="w-4 h-4 text-blue-400" />} label="Runtime" value={movie.Runtime} />
+            <StatCard icon={<Calendar className="w-4 h-4 text-green-400" />} label="Released" value={movie.Released} />
+            <StatCard icon={<Clapperboard className="w-4 h-4 text-red-400" />} label="Box Office" value={movie.BoxOffice || "N/A"} />
+            <StatCard icon={<Award className="w-4 h-4 text-amber-400" />} label="Awards" value={movie.Awards} />
+            <StatCard icon={<Shield className="w-4 h-4 text-cyan-400" />} label="Rating" value={movie.Rated} />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function InfoItem({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) {
+function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center space-x-2 text-gray-700 text-sm sm:text-base">
-      {icon}
-      <span className="font-medium">{label}:</span>
-      <span className="truncate">{value}</span>
+    <div className="flex items-start gap-3 p-3.5 bg-gray-800/40 rounded-xl border border-gray-700/50">
+      <div className="mt-0.5 flex-shrink-0">{icon}</div>
+      <div className="min-w-0">
+        <p className="text-xs text-gray-500 mb-0.5">{label}</p>
+        <p className="text-sm text-white font-medium truncate">{value}</p>
+      </div>
     </div>
   );
 }
 
-function InfoSection({ title, content }: { title: string, content: string }) {
+function InfoSection({
+  icon,
+  title,
+  content,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  content: string;
+}) {
   return (
-    <div>
-      <h2 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800">{title}</h2>
-      <p className="text-sm sm:text-base text-gray-700">{content}</p>
+    <div className="p-4 bg-gray-800/40 rounded-xl border border-gray-700/50">
+      <div className="flex items-center gap-2 mb-2">
+        {icon}
+        <h3 className="text-sm font-semibold text-gray-300">{title}</h3>
+      </div>
+      <p className="text-sm text-gray-400 leading-relaxed">{content}</p>
     </div>
-  );
-}
-
-function CustomBadge({ children, variant = 'default' }: { children: React.ReactNode, variant?: 'default' | 'outline' }) {
-  const baseClasses = "inline-flex items-center rounded-full px-2 sm:px-2.5 py-0.5 text-xs font-semibold";
-  const variantClasses = variant === 'outline'
-    ? "bg-white border border-gray-300 text-gray-700"
-    : "bg-gray-100 text-gray-800";
-
-  return (
-    <span className={`${baseClasses} ${variantClasses}`}>
-      {children}
-    </span>
   );
 }
 
 function MovieDetailsSkeleton() {
   return (
-    <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="aspect-video sm:aspect-[21/9] lg:aspect-[21/8] bg-gray-200 animate-pulse" />
-      <div className="p-4 sm:p-6 lg:p-8 space-y-4">
-        <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse" />
-        <div className="flex gap-2">
-          <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse" />
-          <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse" />
-          <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse" />
-        </div>
-        <div className="space-y-2">
-          <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-6 bg-gray-200 rounded w-full animate-pulse" />
-          ))}
-        </div>
-        <div className="space-y-4">
-          <div className="h-24 bg-gray-200 rounded w-full animate-pulse" />
-          <div className="h-24 bg-gray-200 rounded w-full animate-pulse" />
+    <div className="pb-12 animate-pulse">
+      <div className="h-[380px] md:h-[460px] bg-gray-800" />
+      <div className="px-4 md:px-10 py-8 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="h-16 bg-gray-800 rounded-2xl" />
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-800 rounded w-full" />
+              <div className="h-4 bg-gray-800 rounded w-5/6" />
+              <div className="h-4 bg-gray-800 rounded w-4/6" />
+            </div>
+          </div>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-14 bg-gray-800 rounded-xl" />
+            ))}
+          </div>
         </div>
       </div>
     </div>
