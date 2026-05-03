@@ -18,16 +18,24 @@ const Sidebar = () => {
   const pathname = usePathname();
   const { totalFavorites } = useFavorites();
 
+  React.useEffect(() => {
+    const handleToggle = () => setIsOpen((prev) => !prev);
+    window.addEventListener("toggle-sidebar", handleToggle);
+    return () => window.removeEventListener("toggle-sidebar", handleToggle);
+  }, []);
+
   return (
     <>
       {/* Mobile hamburger */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-gray-900/90 border border-gray-700 rounded-xl text-white backdrop-blur-sm transition-all hover:border-cyan-500/50"
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
+      {pathname !== "/explore" && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-gray-900/90 border border-gray-700 rounded-xl text-white backdrop-blur-sm transition-all hover:border-cyan-500/50"
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      )}
 
       {/* Overlay */}
       {isOpen && (

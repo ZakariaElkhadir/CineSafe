@@ -8,7 +8,13 @@ import Image from "next/image";
 import { AILoadingHorizontal } from "./ai-loading";
 import { useMovieCache } from "@/contexts/MovieCacheContext";
 
-export function SearchBar() {
+export interface SearchBarProps {
+  onFocus?: () => void;
+  onBlur?: () => void;
+  className?: string;
+}
+
+export function SearchBar({ onFocus, onBlur, className = "" }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +121,7 @@ export function SearchBar() {
   const showPanel = isPanelOpen && (isLoading || hasSearched);
 
   return (
-    <div className="relative flex-grow max-w-lg" ref={searchPanelRef}>
+    <div className={`relative flex-grow max-w-lg ${className}`} ref={searchPanelRef}>
       {/* Input */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -123,11 +129,17 @@ export function SearchBar() {
           ref={inputRef}
           type="text"
           placeholder="Search movies with AI..."
-          className="w-full pl-9 pr-20 py-2 bg-gray-800/80 border border-gray-700 hover:border-cyan-500/50 focus:border-cyan-500 rounded-full text-sm text-white placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/20"
+          className="w-full pl-9 pr-20 py-2 bg-gray-800/80 border border-gray-700 hover:border-cyan-500/50 rounded-full text-sm text-white placeholder-gray-400 transition-all duration-200 neon-border-focus"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => { if (hasSearched && results.length > 0) setIsPanelOpen(true); }}
+          onFocus={() => { 
+            if (hasSearched && results.length > 0) setIsPanelOpen(true); 
+            onFocus?.();
+          }}
+          onBlur={() => {
+            onBlur?.();
+          }}
           aria-label="Search movies"
           aria-autocomplete="list"
         />

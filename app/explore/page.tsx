@@ -2,7 +2,7 @@
 import Slider from "@/components/slider";
 import { SearchBar } from "@/components/search-bar";
 import { useState } from "react";
-import { Bell, ChevronDown, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, Sparkles, Menu } from "lucide-react";
 import MovieGrid from "../../components/movies/movie-grid";
 
 const options = ["All", "Movies", "Animation", "Comedy", "Adventure"];
@@ -11,17 +11,31 @@ function Explore() {
   const [isPopdownVisible, setIsPopdownVisible] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("All");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
     <div className="min-h-screen text-white">
       {/* ─── Top Header ─── */}
       <header className="lg:pl-72 sticky top-0 z-30 bg-[hsl(220,20%,8%)]/90 backdrop-blur-md border-b border-gray-800/60">
-        <div className="px-4 md:px-8 py-3 flex items-center gap-3">
+        <div className="px-4 md:px-8 py-3 flex items-center gap-3 relative min-h-[60px]">
+          {/* Mobile Menu */}
+          <button
+            className={`lg:hidden flex-shrink-0 p-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-cyan-500/40 rounded-full text-white transition-all duration-300 opacity-100 scale-100 w-9 h-9 flex items-center justify-center ${
+              isSearchFocused ? "max-md:opacity-0 max-md:scale-50 max-md:w-0 max-md:-ml-2 max-md:pointer-events-none" : ""
+            }`}
+            onClick={() => window.dispatchEvent(new Event("toggle-sidebar"))}
+            aria-label="Toggle Menu"
+          >
+            <Menu size={18} />
+          </button>
+
           {/* Filter dropdown */}
-          <div className="relative flex-shrink-0">
+          <div className={`relative transition-all duration-300 opacity-100 scale-100 flex-shrink-0 ${
+            isSearchFocused ? "max-md:opacity-0 max-md:scale-50 max-md:w-0 max-md:pointer-events-none max-md:overflow-hidden" : ""
+          }`}>
             <button
               id="filter-dropdown-btn"
-              className="flex items-center gap-1.5 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-cyan-500/40 text-white text-sm rounded-full transition-all duration-200 ml-10 lg:ml-0"
+              className="flex items-center gap-1.5 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-cyan-500/40 text-white text-sm rounded-full transition-all duration-200"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               {selectedOption}
@@ -51,12 +65,23 @@ function Explore() {
           </div>
 
           {/* Search bar */}
-          <div className="flex-1">
-            <SearchBar />
+          <div 
+            className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex-1 relative w-full ${
+              isSearchFocused 
+                ? "max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:w-[85%] max-md:z-50 max-md:drop-shadow-[0_0_20px_rgba(6,182,212,0.15)]" 
+                : ""
+            }`}
+          >
+            <SearchBar 
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+            />
           </div>
 
           {/* Notification bell */}
-          <div className="relative flex-shrink-0">
+          <div className={`relative transition-all duration-300 opacity-100 scale-100 flex-shrink-0 ${
+            isSearchFocused ? "max-md:opacity-0 max-md:scale-50 max-md:w-0 max-md:pointer-events-none max-md:overflow-hidden" : ""
+          }`}>
             <button
               id="notification-btn"
               className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 text-gray-400 hover:text-white transition-all"
