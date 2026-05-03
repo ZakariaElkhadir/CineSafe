@@ -20,7 +20,7 @@ function Explore() {
         <div className="px-4 md:px-8 py-3 flex items-center gap-3 relative min-h-[60px]">
           {/* Mobile Menu */}
           <button
-            className={`lg:hidden flex-shrink-0 p-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-cyan-500/40 rounded-full text-white transition-all duration-300 opacity-100 scale-100 w-9 h-9 flex items-center justify-center ${
+            className={`lg:hidden flex-shrink-0 p-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-cyan-500/40 rounded-full text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] opacity-100 scale-100 w-9 h-9 flex items-center justify-center ${
               isSearchFocused ? "max-md:opacity-0 max-md:scale-50 max-md:w-0 max-md:-ml-2 max-md:pointer-events-none" : ""
             }`}
             onClick={() => window.dispatchEvent(new Event("toggle-sidebar"))}
@@ -30,7 +30,7 @@ function Explore() {
           </button>
 
           {/* Filter dropdown */}
-          <div className={`relative transition-all duration-300 opacity-100 scale-100 flex-shrink-0 ${
+          <div className={`relative transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] opacity-100 scale-100 flex-shrink-0 ${
             isSearchFocused ? "max-md:opacity-0 max-md:scale-50 max-md:w-0 max-md:pointer-events-none max-md:overflow-hidden" : ""
           }`}>
             <button
@@ -66,7 +66,7 @@ function Explore() {
 
           {/* Search bar */}
           <div 
-            className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex-1 relative w-full ${
+            className={`transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex-1 relative w-full ${
               isSearchFocused 
                 ? "max-md:absolute max-md:left-1/2 max-md:-translate-x-1/2 max-md:w-[85%] max-md:z-50 max-md:drop-shadow-[0_0_20px_rgba(6,182,212,0.15)]" 
                 : ""
@@ -79,7 +79,7 @@ function Explore() {
           </div>
 
           {/* Notification bell */}
-          <div className={`relative transition-all duration-300 opacity-100 scale-100 flex-shrink-0 ${
+          <div className={`relative transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] opacity-100 scale-100 flex-shrink-0 ${
             isSearchFocused ? "max-md:opacity-0 max-md:scale-50 max-md:w-0 max-md:pointer-events-none max-md:overflow-hidden" : ""
           }`}>
             <button

@@ -8,7 +8,6 @@ import {
   Users,
   Award,
   Clapperboard,
-  ArrowLeft,
   Shield,
 } from "lucide-react";
 import { improvePosterQuality } from "@/app/api/MoviesData";
@@ -16,6 +15,7 @@ import Link from "next/link";
 import { AISafetyCard } from "@/components/movies/ai-safety-card";
 import { VibeRecommendations } from "@/components/movies/vibe-recommendations";
 import { AskAIButton } from "@/components/movies/ask-ai-button";
+import { MovieDetailsHeader } from "@/components/movies/movie-details-header";
 
 export default async function MovieDetails({
   params,
@@ -67,15 +67,8 @@ async function MovieContent({ id }: { id: string }) {
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,20%,8%)] via-[hsl(220,20%,8%)]/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(220,20%,8%)]/60 to-transparent" />
 
-        {/* Back button */}
-        <div className="absolute top-6 left-6">
-          <Link href="/explore">
-            <button className="flex items-center gap-2 px-4 py-2 glass-dark rounded-full text-white text-sm font-medium hover:bg-white/10 transition-all">
-              <ArrowLeft size={16} />
-              Back
-            </button>
-          </Link>
-        </div>
+        {/* Back button & Menu */}
+        <MovieDetailsHeader />
 
         {/* Title & badges */}
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">

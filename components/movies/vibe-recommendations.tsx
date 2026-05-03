@@ -79,14 +79,14 @@ export function VibeRecommendations({ movie }: VibeRecommendationsProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-purple-500/30 hover:scrollbar-thumb-purple-500/50 scrollbar-track-transparent snap-x snap-mandatory px-1">
         {suggestions.map((s, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="group"
+            className="group flex-shrink-0 w-[130px] sm:w-[150px] snap-start"
           >
             <Link href={`/movies/${s.details?.imdbID}`} className="block space-y-3">
               <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-gray-800 border border-gray-700/50 group-hover:border-purple-500/50 transition-all shadow-lg">

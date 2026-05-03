@@ -72,10 +72,11 @@ export function ChatBubble() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="absolute bottom-20 right-0 w-[350px] sm:w-[400px] h-[500px] bg-gray-900/95 border border-gray-700/50 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col overflow-hidden"
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+            className="absolute bottom-20 right-0 w-[350px] sm:w-[400px] h-[550px] max-h-[80vh] bg-gray-900/95 border border-gray-700/50 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col overflow-hidden ring-1 ring-white/5"
           >
             {/* Header */}
             <div className="p-4 bg-gradient-to-r from-cyan-600/20 to-teal-600/20 border-b border-gray-700/50 flex items-center justify-between">
@@ -126,12 +127,17 @@ export function ChatBubble() {
                   </div>
                 </div>
               )}
-              {messages.map((m, i) => (
-                <div
-                  key={i}
-                  className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div className={`flex gap-3 max-w-[85%] ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+              <AnimatePresence initial={false}>
+                {messages.map((m, i) => (
+                  <motion.div
+                    key={i}
+                    layout
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                    className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div className={`flex gap-3 max-w-[85%] ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
                     <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                       m.role === "user" ? "bg-gray-700" : "bg-cyan-500/10 border border-cyan-500/20"
                     }`}>
@@ -144,13 +150,20 @@ export function ChatBubble() {
                           : "bg-gray-800/80 text-gray-200 border border-gray-700/50 rounded-tl-none"
                       }`}
                     >
-                      {m.content || (isLoading && i === messages.length - 1 ? "..." : "")}
+                      <div className="whitespace-pre-wrap break-words">
+                        {m.content || (isLoading && i === messages.length - 1 ? "..." : "")}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
+              </AnimatePresence>
               {isLoading && messages[messages.length - 1]?.role === "user" && (
-                <div className="flex justify-start">
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-start"
+                >
                   <div className="flex gap-3 max-w-[85%] items-center">
                     <div className="w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
                       <Loader2 size={14} className="text-cyan-400 animate-spin" />
@@ -163,17 +176,17 @@ export function ChatBubble() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-gray-700/50">
-              <div className="relative">
+            <div className="p-4 bg-gray-900/80 backdrop-blur-md border-t border-gray-800/80">
+              <div className="relative flex items-center bg-gray-800/60 border border-gray-700/60 focus-within:border-cyan-500/50 focus-within:ring-1 focus-within:ring-cyan-500/20 rounded-2xl transition-all p-1">
                 <input
                   type="text"
                   placeholder="Ask a question..."
-                  className="w-full pl-4 pr-12 py-3 bg-gray-800 border border-gray-700 focus:border-cyan-500 rounded-2xl text-sm text-white placeholder-gray-500 outline-none transition-all"
+                  className="w-full pl-4 pr-12 py-2.5 bg-transparent text-sm text-white placeholder-gray-500 outline-none"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
@@ -192,14 +205,18 @@ export function ChatBubble() {
       </AnimatePresence>
 
       {/* Bubble Toggle */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
-          isOpen ? "bg-gray-800 text-white rotate-90" : "bg-cyan-500 text-gray-900"
-        }`}
-      >
+      <div className="relative">
+        {!isOpen && (
+          <div className="absolute inset-0 bg-cyan-500 rounded-full blur-xl opacity-20 animate-pulse" />
+        )}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsOpen(!isOpen)}
+          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-10 ${
+            isOpen ? "bg-gray-800 text-white rotate-90" : "bg-cyan-500 text-gray-900"
+          }`}
+        >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
         {!isOpen && (
           <motion.div
@@ -208,7 +225,8 @@ export function ChatBubble() {
             className="absolute -top-1 -right-1 w-5 h-5 bg-teal-400 border-4 border-[hsl(220,20%,8%)] rounded-full"
           />
         )}
-      </motion.button>
+        </motion.button>
+      </div>
     </div>
   );
 }

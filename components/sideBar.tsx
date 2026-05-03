@@ -27,7 +27,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Mobile hamburger */}
-      {pathname !== "/explore" && (
+      {pathname !== "/explore" && !pathname.startsWith("/movies") && (
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-gray-900/90 border border-gray-700 rounded-xl text-white backdrop-blur-sm transition-all hover:border-cyan-500/50"

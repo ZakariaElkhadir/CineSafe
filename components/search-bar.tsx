@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { searchMovies, SearchResult, improvePosterQuality } from "@/app/api/MoviesData";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { AILoadingHorizontal } from "./ai-loading";
 import { useMovieCache } from "@/contexts/MovieCacheContext";
 
@@ -161,8 +162,15 @@ export function SearchBar({ onFocus, onBlur, className = "" }: SearchBarProps) {
       </div>
 
       {/* Results panel */}
-      {showPanel && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+      <AnimatePresence>
+        {showPanel && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+            className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden"
+          >
           {isLoading ? (
             <div className="p-4">
               <AILoadingHorizontal label="Searching with AI..." />
@@ -179,7 +187,12 @@ export function SearchBar({ onFocus, onBlur, className = "" }: SearchBarProps) {
               </div>
               <ul className="max-h-[380px] overflow-y-auto divide-y divide-gray-800/50 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
                 {results.map((movie, idx) => (
-                  <li key={movie.imdbID}>
+                  <motion.li 
+                    key={movie.imdbID}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: Math.min(idx * 0.04, 0.3), duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+                  >
                     <Link
                       href={`/movies/${movie.imdbID}`}
                       onClick={() => { setIsPanelOpen(false); setQuery(""); }}
@@ -220,13 +233,14 @@ export function SearchBar({ onFocus, onBlur, className = "" }: SearchBarProps) {
                         </div>
                       </div>
                     </Link>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </>
           )}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
