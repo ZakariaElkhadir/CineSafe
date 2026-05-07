@@ -23,6 +23,94 @@ interface AnalysisResult {
 // Simple in-memory cache
 const analysisCache = new Map<string, AnalysisResult>();
 
+// Helper to extract and parse JSON robustly
+function extractAndParseJSON(raw: string): any {
+  const trimmed = raw.trim();
+  // Try direct parse first
+  try {
+    return JSON.parse(trimmed);
+  } catch {}
+
+  // Remove markdown block backticks
+  let cleaned = trimmed.replace(/```json/gi, "").replace(/```/g, "").trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+
+  // Find boundaries of the JSON payload
+  const startCurly = cleaned.indexOf('{');
+  const startBracket = cleaned.indexOf('[');
+  
+  let start = -1;
+  let end = -1;
+  
+  if (startCurly !== -1 && (startBracket === -1 || startCurly < startBracket)) {
+    start = startCurly;
+    end = cleaned.lastIndexOf('}');
+  } else if (startBracket !== -1) {
+    start = startBracket;
+    end = cleaned.lastIndexOf(']');
+  }
+  
+  if (start !== -1 && end !== -1 && end > start) {
+    const extracted = cleaned.substring(start, end + 1);
+    try {
+      return JSON.parse(extracted);
+    } catch {
+      // Try stripping standard single-line/multi-line comments
+      const commentless = extracted.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
+      try {
+        return JSON.parse(commentless);
+      } catch {}
+    }
+  }
+
+  throw new Error("Unable to extract valid JSON from LLM response");
+}
+
+// Ensure the parsed result matches the AnalysisResult schema
+function sanitizeAnalysisResult(parsed: any): AnalysisResult {
+  const defaultScore = { score: 0, explanation: "No details available." };
+  
+  const sanitizeScore = (obj: any) => {
+    if (!obj || typeof obj !== "object") return defaultScore;
+    
+    let score = 0;
+    if (typeof obj.score === "number") {
+      score = obj.score;
+    } else if (typeof obj.score === "string") {
+      score = parseFloat(obj.score) || 0;
+    }
+    
+    return {
+      score: Math.min(10, Math.max(0, score)),
+      explanation: typeof obj.explanation === "string" ? obj.explanation : "No specific details provided.",
+    };
+  };
+
+  const sanitizeArray = (arr: any): string[] => {
+    if (!Array.isArray(arr)) return [];
+    return arr.filter((item): item is string => typeof item === "string");
+  };
+
+  const overall_verdict = (parsed && (parsed.overall_verdict === "Safe" || parsed.overall_verdict === "Caution" || parsed.overall_verdict === "Not Recommended"))
+    ? parsed.overall_verdict
+    : "Caution";
+
+  return {
+    violence: sanitizeScore(parsed?.violence),
+    language: sanitizeScore(parsed?.language),
+    scariness: sanitizeScore(parsed?.scariness),
+    mature_themes: sanitizeScore(parsed?.mature_themes),
+    safe_age: typeof parsed?.safe_age === "number" ? parsed.safe_age : (parseInt(parsed?.safe_age) || 0),
+    parent_tip: typeof parsed?.parent_tip === "string" ? parsed.parent_tip : "Please review content guidelines before letting children watch.",
+    overall_verdict,
+    conversation_starters: sanitizeArray(parsed?.conversation_starters),
+    positive_messages: sanitizeArray(parsed?.positive_messages),
+    role_models: sanitizeArray(parsed?.role_models),
+  };
+}
+
 export async function POST(req: NextRequest) {
   const { title, plot, rating, year, genre, imdbID } = await req.json();
 
@@ -75,8 +163,8 @@ Rules:
     });
 
     const raw = completion.choices[0].message.content ?? "";
-    const cleaned = raw.replace(/```json|```/g, "").trim();
-    const result = JSON.parse(cleaned);
+    const parsed = extractAndParseJSON(raw);
+    const result = sanitizeAnalysisResult(parsed);
 
     // Cache the result
     if (imdbID) {

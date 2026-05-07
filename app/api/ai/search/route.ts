@@ -7,6 +7,79 @@ const openai = new OpenAI({
   baseURL: "https://integrate.api.nvidia.com/v1",
 });
 
+// Helper to extract and parse JSON robustly
+function extractAndParseJSON(raw: string): any {
+  const trimmed = raw.trim();
+  // Try direct parse first
+  try {
+    return JSON.parse(trimmed);
+  } catch {}
+
+  // Remove markdown block backticks
+  let cleaned = trimmed.replace(/```json/gi, "").replace(/```/g, "").trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+
+  // Find boundaries of the JSON payload
+  const startCurly = cleaned.indexOf('{');
+  const startBracket = cleaned.indexOf('[');
+  
+  let start = -1;
+  let end = -1;
+  
+  if (startCurly !== -1 && (startBracket === -1 || startCurly < startBracket)) {
+    start = startCurly;
+    end = cleaned.lastIndexOf('}');
+  } else if (startBracket !== -1) {
+    start = startBracket;
+    end = cleaned.lastIndexOf(']');
+  }
+  
+  if (start !== -1 && end !== -1 && end > start) {
+    const extracted = cleaned.substring(start, end + 1);
+    try {
+      return JSON.parse(extracted);
+    } catch {
+      // Try stripping standard single-line/multi-line comments
+      const commentless = extracted.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
+      try {
+        return JSON.parse(commentless);
+      } catch {}
+    }
+  }
+
+  throw new Error("Unable to extract valid JSON from LLM response");
+}
+
+function sanitizeSearchTitles(parsed: any): string[] {
+  let rawArray: any[] = [];
+  if (Array.isArray(parsed)) {
+    rawArray = parsed;
+  } else if (parsed && typeof parsed === "object") {
+    if (Array.isArray(parsed.titles)) {
+      rawArray = parsed.titles;
+    } else if (Array.isArray(parsed.movies)) {
+      rawArray = parsed.movies;
+    } else if (Array.isArray(parsed.results)) {
+      rawArray = parsed.results;
+    } else {
+      const arrayKey = Object.keys(parsed).find(k => Array.isArray(parsed[k]));
+      if (arrayKey) {
+        rawArray = parsed[arrayKey];
+      }
+    }
+  }
+
+  return rawArray
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object" && typeof item.title === "string") return item.title;
+      return null;
+    })
+    .filter((item): item is string => item !== null);
+}
+
 export async function POST(req: NextRequest) {
   const { query } = await req.json();
 
@@ -33,8 +106,8 @@ Respond ONLY with this JSON array of strings, no other text:
     });
 
     const raw = completion.choices[0].message.content ?? "";
-    const cleaned = raw.replace(/```json|```/g, "").trim();
-    const titles: string[] = JSON.parse(cleaned);
+    const parsed = extractAndParseJSON(raw);
+    const titles = sanitizeSearchTitles(parsed);
 
     // Now fetch basic details (imdbID, Title, Year, Poster) for each title using OMDB
     const results = await Promise.all(
